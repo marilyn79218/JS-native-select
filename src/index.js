@@ -1,9 +1,10 @@
 // import { ApiUtil } from './utils';
-// const ApiUtil = require('./utils/index.js');
+const utils = require('./utils/index.js');
+utils.ApiUtil.get().then(res => console.log('Api response', res));
 // console.log('ApiUtil', ApiUtil.ApiUtil.ApiUtil.get());
 
-const f = require('./utils/iife.js');
-f.f();
+// const f = require('./utils/iife.js');
+// f.f();
 
 // Ceates an HTML element
 function component() {
