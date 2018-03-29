@@ -44,12 +44,14 @@ var handler = (e) => {
   var _this = this;
 
   // Handler Initializing
-  var logoNameHandler = (selectedItem, selectedLi, displayContainer) => (e) => {
-    selectedItem.isInHistory = true;
-    this.historyList.push(selectedItem);
+  var logoNameHandler = (selectedItem, displayContainer) => (e) => {
+    if (!selectedItem.isInHistory) {
+      selectedItem.isInHistory = true;
+      this.historyList.push(selectedItem);
+    }
     console.log('historyList', this.historyList);
 
-    addItemToHistory(selectedLi, displayContainer);
+    addItemToHistory(selectedItem, displayContainer);
 
     this.inputNode.value = selectedItem.name;
   }
@@ -71,10 +73,11 @@ var handler = (e) => {
     // Create wrapper for logo & name
     let logoNameWrapper = document.createElement('div');
     logoNameWrapper.classList.add('logo-name-wrapper');
+    logoNameWrapper.id = item.id;
     logoNameWrapper.insertBefore(appImg, logoNameWrapper.firstChild);
     logoNameWrapper.appendChild(appNameWrapper);
     console.log('onclick li', li);
-    logoNameWrapper.onclick = logoNameHandler(item, li, displayContainer);
+    logoNameWrapper.onclick = logoNameHandler(item, displayContainer);
 
     return logoNameWrapper;
   }
@@ -147,17 +150,17 @@ var handler = (e) => {
     });
   }
 
-  var addItemToHistory = (selectedLi, displayContainer) => {
-    let clonedLi = selectedLi.cloneNode(true);
-    clonedLi.childNodes[0].onclick = selectedLi.childNodes[0].onclick;
+  var addItemToHistory = (selectedItem, displayContainer) => {
+    // Find selected li from current ul
+    let ajustedLi = Array.from(displayContainer.childNodes).find((li) => selectedItem.id === Number(li.childNodes[0].id));
+
+    let clonedLi = ajustedLi.cloneNode(true);
+    clonedLi.childNodes[0].onclick = ajustedLi.childNodes[0].onclick;
     let isInHistory = true;
     replaceWith(clonedLi.childNodes[1], getLastItemInLi(isInHistory));
 
-    console.log('displayContainer', displayContainer);
-    console.log('selectedLi', selectedLi);
-
     // Remove it from displayContainer (ul)
-    displayContainer.removeChild(selectedLi);
+    displayContainer.removeChild(ajustedLi);
 
     // Prepend it to displayContainer (ul)
     displayContainer.insertBefore(clonedLi, displayContainer.firstChild);
