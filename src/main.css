@@ -1,0 +1,54 @@
+.display-container {
+  position: absolute;
+  left: 0;
+  width: 200px;
+  height: 400px;
+  background: grey;
+  padding: 0;
+  overflow: auto;
+  margin: 5px 0;
+  padding: 0 5px;
+}
+
+.list-item {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 40px;
+}
+
+.logo-name-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  cursor: pointer;
+  width: 100px;
+}
+
+.logo-name-wrapper:hover + .history-item {
+  visibility: visible;
+  cursor: pointer;
+}
+
+.app-img {
+  width: 28px;
+  height: 28px;
+  margin-right: 3px;
+}
+
+.app-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-item {
+  visibility: hidden;
+  font-size: 14px;
+}
+
+.history-item:hover {
+  visibility: visible;
+  cursor: pointer;
+}
+

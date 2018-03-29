@@ -41,6 +41,10 @@ const data = {
       name: 'LINE SHOP',
       logo: 'https://d.line-scdn.net/stf/line-lp/family/en/lineshop_96.png',
     },
+    {
+      name: 'LINE Tools',
+      logo: 'https://d.line-scdn.net/stf/line-lp/family/en/LP_Family_icon_96_LINE-Tools.jpg',
+    },
   ]
 };
 
