@@ -37,6 +37,10 @@ var handler = (e) => {
   this.data = {};
   this.historyList = [];
 
+  // Init input node
+  this.inputNode = e.target;
+  this.inputNode.style.cssText = "position: relative;";
+
   var _this = this;
 
   // Handler Initializing
@@ -46,6 +50,8 @@ var handler = (e) => {
     console.log('historyList', this.historyList);
 
     addItemToHistory(selectedLi, displayContainer);
+
+    this.inputNode.value = selectedItem.name;
   }
 
   // UI render methods
@@ -143,8 +149,12 @@ var handler = (e) => {
 
   var addItemToHistory = (selectedLi, displayContainer) => {
     let clonedLi = selectedLi.cloneNode(true);
+    clonedLi.childNodes[0].onclick = selectedLi.childNodes[0].onclick;
     let isInHistory = true;
     replaceWith(clonedLi.childNodes[1], getLastItemInLi(isInHistory));
+
+    console.log('displayContainer', displayContainer);
+    console.log('selectedLi', selectedLi);
 
     // Remove it from displayContainer (ul)
     displayContainer.removeChild(selectedLi);
@@ -157,12 +167,8 @@ var handler = (e) => {
     this.data = res;
     console.log('Api response', res);
 
-    // Init input node
-    let inputNode = e.target;
-    inputNode.style.cssText = "position: relative;";
-
     // Wrap a container
-    wrapContainer(inputNode, 'div');
+    wrapContainer(this.inputNode, 'div');
     let inputContainer = document.getElementById('input-container');
     inputContainer.style.cssText = 'position: relative;';
 
@@ -177,7 +183,7 @@ var handler = (e) => {
     inputContainer.appendChild(displayContainer);
 
     // Keep focus on the input field
-    inputNode.focus();
+    this.inputNode.focus();
   });
 }
 
