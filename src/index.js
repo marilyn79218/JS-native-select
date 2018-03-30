@@ -32,33 +32,49 @@ var replaceWith = (replacedNode, newNode) => {
   replacedNode.parentNode.removeChild(replacedNode);
 }
 
+// Helper functions
+var moveSelectedItemToFist = (targetItem, allItems) => {
+  let srcItemIndex = allItems.findIndex(srcItem => srcItem.id === targetItem.id);
+  let srcItem = Object.assign({}, allItems[srcItemIndex]);
+
+  allItems.splice(srcItemIndex, 1);
+  allItems.unshift(srcItem);
+}
+
 var handler = (e) => {
   // Data initializing
   this.data = {};
-  this.historyList = [];
 
   // Init input node
   this.inputNode = e.target;
   this.inputNode.style.cssText = "position: relative;";
 
+  // ul Node
+  this.displayContainer;
+
   var _this = this;
 
   // Handler Initializing
-  var logoNameHandler = (selectedItem, displayContainer) => (e) => {
+  var logoNameHandler = (selectedItem) => (e) => {
     if (!selectedItem.isInHistory) {
-      selectedItem.isInHistory = true;
-      this.historyList.push(selectedItem);
+      selectedItem.isInHistory = true; 
     }
-    console.log('historyList', this.historyList);
 
-    addItemToHistory(selectedItem, displayContainer);
+    // Move selected item to the fist of source data list
+    moveSelectedItemToFist(selectedItem, _this.data.items);
+
+    // Re-render display list (ul)
+    this.displayContainer.innerHTML = '';
+    drawDisplayList();
+
+    // addItemToHistory(selectedItem);
 
     this.inputNode.value = selectedItem.name;
   }
 
   // UI render methods
   // Create basic li children
-  var getLogoNameWrapper = (item, li, displayContainer) => {
+  var getLogoNameWrapper = (item, li) => {
     // Create first element, img
     let appImg = document.createElement('img');
     appImg.src = item.logo;
@@ -77,7 +93,7 @@ var handler = (e) => {
     logoNameWrapper.insertBefore(appImg, logoNameWrapper.firstChild);
     logoNameWrapper.appendChild(appNameWrapper);
     console.log('onclick li', li);
-    logoNameWrapper.onclick = logoNameHandler(item, displayContainer);
+    logoNameWrapper.onclick = logoNameHandler(item);
 
     return logoNameWrapper;
   }
@@ -101,12 +117,12 @@ var handler = (e) => {
   }
 
   // Create history li
-  var getHistoryLi = (item, displayContainer) => {
+  var getHistoryLi = (item) => {
     let li = document.createElement('li');
     li.classList.add('list-item');
 
     // Create logo name wrapper
-    let logoNameWrapper = getLogoNameWrapper(item, li, displayContainer);
+    let logoNameWrapper = getLogoNameWrapper(item, li);
 
     let isInHistory = true;
     let historyWrapper = getLastItemInLi(isInHistory);
@@ -118,12 +134,12 @@ var handler = (e) => {
     return li;
   }
 
-  var getNormalLi = (item, displayContainer) => {
+  var getNormalLi = (item) => {
     let li = document.createElement('li');
     li.classList.add('list-item');
 
     // Create logo name wrapper
-    let logoNameWrapper = getLogoNameWrapper(item, li, displayContainer);
+    let logoNameWrapper = getLogoNameWrapper(item, li);
 
     let isInHistory = false;
     let historyWrapper = getLastItemInLi(isInHistory);
@@ -135,36 +151,40 @@ var handler = (e) => {
     return li;
   }
 
-  var drawDisplayList = (items, displayContainer) => {
-    items.forEach((item, index) => {
-      if (!item.id) {
-        _this.data.items[index].id = index;
+  var drawDisplayList = () => {
+    this.data.items.forEach((item, index) => {
+      if (item.id === undefined) {
+        item.id = index;
       }
 
-      // let historyLi = getHistoryLi(item, displayContainer);
-      let normalLi = getNormalLi(item, displayContainer);
+      let currentLi;
+      if (item.isInHistory) {
+        currentLi = getHistoryLi(item);
+      } else {
+        currentLi = getNormalLi(item);
+      }
 
       // Append a current li to ul
       // displayContainer.appendChild(historyLi);
-      displayContainer.appendChild(normalLi);
+      this.displayContainer.appendChild(currentLi);
     });
   }
 
-  var addItemToHistory = (selectedItem, displayContainer) => {
-    // Find selected li from current ul
-    let ajustedLi = Array.from(displayContainer.childNodes).find((li) => selectedItem.id === Number(li.childNodes[0].id));
+  // var addItemToHistory = (selectedItem) => {
+  //   // Find selected li from current ul
+  //   let ajustedLi = Array.from(this.displayContainer.childNodes).find((li) => selectedItem.id === Number(li.childNodes[0].id));
 
-    let clonedLi = ajustedLi.cloneNode(true);
-    clonedLi.childNodes[0].onclick = ajustedLi.childNodes[0].onclick;
-    let isInHistory = true;
-    replaceWith(clonedLi.childNodes[1], getLastItemInLi(isInHistory));
+  //   let clonedLi = ajustedLi.cloneNode(true);
+  //   clonedLi.childNodes[0].onclick = ajustedLi.childNodes[0].onclick;
+  //   let isInHistory = true;
+  //   replaceWith(clonedLi.childNodes[1], getLastItemInLi(isInHistory));
 
-    // Remove it from displayContainer (ul)
-    displayContainer.removeChild(ajustedLi);
+  //   // Remove it from displayContainer (ul)
+  //   this.displayContainer.removeChild(ajustedLi);
 
-    // Prepend it to displayContainer (ul)
-    displayContainer.insertBefore(clonedLi, displayContainer.firstChild);
-  }
+  //   // Prepend it to displayContainer (ul)
+  //   this.displayContainer.insertBefore(clonedLi, this.displayContainer.firstChild);
+  // }
 
   utils.ApiUtil.get().then(res => {
     this.data = res;
@@ -176,14 +196,14 @@ var handler = (e) => {
     inputContainer.style.cssText = 'position: relative;';
 
     // Init the display list container
-    let displayContainer = document.createElement('ul');
-    displayContainer.classList.add('display-container');
+    this.displayContainer = document.createElement('ul');
+    this.displayContainer.classList.add('display-container');
 
     // Draw display list
-    drawDisplayList(this.data.items, displayContainer);
+    drawDisplayList();
 
     // Put display container after input field
-    inputContainer.appendChild(displayContainer);
+    inputContainer.appendChild(this.displayContainer);
 
     // Keep focus on the input field
     this.inputNode.focus();
