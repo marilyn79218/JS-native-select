@@ -41,6 +41,18 @@ var moveSelectedItemToFist = (targetItem, allItems) => {
   allItems.unshift(srcItem);
 }
 
+var removeSelectedItemFromHistory = (selectedItemId, allItems) => {
+  // Remove it from history
+  let targetItemIndex = allItems.findIndex(srcItem => srcItem.id === selectedItemId);
+  let clonedItem = Object.assign({}, allItems[targetItemIndex]);
+  allItems.splice(targetItemIndex, 1);
+
+  // Put it as the first element of 'not-in-history elements'
+  let newIndex = allItems.findIndex(srcItem => !srcItem.isInHistory);
+  clonedItem.isInHistory = false;
+  allItems.splice(newIndex, 0, clonedItem);
+}
+
 var handler = (e) => {
   // Data initializing
   this.data = {};
@@ -98,6 +110,19 @@ var handler = (e) => {
     return logoNameWrapper;
   }
 
+  var historyWrapperHandler = (e) => {
+    let historyWrapper = e.target;
+    let selectedItemId = Number(historyWrapper.previousElementSibling.id);
+    console.log('historyWrapper previous sibling', selectedItemId);
+
+    // Remove item from history list & Put it as the first of 'not-in-history elements'
+    removeSelectedItemFromHistory(selectedItemId, _this.data.items);
+
+    // Re-render display list (ul)
+    this.displayContainer.innerHTML = '';
+    drawDisplayList();
+  }
+
   var getLastItemInLi = (isInHistory) => {
     // let lastItemWrapper;
     if (isInHistory) {
@@ -106,6 +131,7 @@ var handler = (e) => {
       historyWrapper.classList.add('history-item');
       let historyText = document.createTextNode('remove history');
       historyWrapper.appendChild(historyText);
+      historyWrapper.onclick = historyWrapperHandler;
 
       return historyWrapper;
     } else {
