@@ -68,6 +68,7 @@ var handler = function(e) {
     logoNameWrapper.id = item.id;
     logoNameWrapper.insertBefore(appImg, logoNameWrapper.firstChild);
     logoNameWrapper.appendChild(appNameWrapper);
+    logoNameWrapper.onclick = logoNameHandler(item);
 
     return logoNameWrapper;
   }
@@ -82,6 +83,8 @@ var handler = function(e) {
     // Re-render display list (ul)
     this.displayContainer.innerHTML = '';
     drawDisplayList();
+
+    this.wrapContainer.focus();
   }
 
   var getLastItemInLi = (isInHistory) => {
@@ -161,15 +164,15 @@ var handler = function(e) {
           }
         }, 100);
       });
-      currentLi.addEventListener('click', logoNameHandler(item, currentLi));
+      // currentLi.addEventListener('click', logoNameHandler(item));
 
       // currentLi.addEventListener('focus', (e) => {
       //   console.log('   currentLi focus', e.target);
       // });
       currentLi.addEventListener('keyup', (e) => {
         if (e.keyCode === 13) {
-          console.log('   currentLi keyup', e.target);
-          currentLi.click();
+          console.log('   currentLi keyup', currentLi.childNodes[1]);
+          currentLi.childNodes[0].click();
         }
       });
 
