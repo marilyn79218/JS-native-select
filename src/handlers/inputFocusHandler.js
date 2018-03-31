@@ -166,37 +166,33 @@ var handler = function(e) {
   //   this.displayContainer.insertBefore(clonedLi, this.displayContainer.firstChild);
   // }
 
-  var initSetting = () => {
-    // Wrap a container
-    this.wrapContainer = wrapContainer(this.inputNode, 'div');
-    this.wrapContainer.addEventListener('blur', wrapperContainerBlurHandler);
-    // let inputContainer = document.getElementById('input-container');
-    let inputContainer = this.inputNode.parentNode;
-    inputContainer.style.cssText = 'position: relative; display: inline-block;';
-
-    // Init the display list container
-    this.displayContainer = document.createElement('ul');
-    this.displayContainer.classList.add('display-container');
-
-    // Draw display list
-    drawDisplayList();
-
-    // Put display container after input field
-    inputContainer.appendChild(this.displayContainer);
-
-    // Keep focus on the input field
-    this.inputNode.focus(); 
-  }
-
   if (!this.data) {
     utils.ApiUtil.get().then(res => {
       this.data = res;
       console.log('Api response', res);
 
-      initSetting();
+      // Wrap a container
+      this.wrapContainer = wrapContainer(this.inputNode, 'div');
+      this.wrapContainer.addEventListener('blur', wrapperContainerBlurHandler);
+      
+      let inputContainer = this.inputNode.parentNode;
+      inputContainer.style.cssText = 'position: relative; display: inline-block;';
+
+      // Init the display list container
+      this.displayContainer = document.createElement('ul');
+      this.displayContainer.classList.add('display-container');
+
+      // Draw display list
+      drawDisplayList();
+
+      // Put display container after input field
+      this.wrapContainer.appendChild(this.displayContainer);
+
+      // Keep focus on the input field
+      this.inputNode.focus();
     });
   } else {
-    initSetting();
+    this.wrapContainer.classList.toggle('hide-ul');
   }
 
   setTimeout(() => this.wrapContainer.focus(), 0);
@@ -204,7 +200,7 @@ var handler = function(e) {
 
 var wrapperContainerBlurHandler = function(e) {
   this.wrapContainer = e.target;
-  this.wrapContainer.classList.add('hide-ul');
+  this.wrapContainer.classList.toggle('hide-ul');
 }
 
 module.exports = {
