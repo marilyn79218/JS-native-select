@@ -5,19 +5,7 @@ const wrapContainer = helpers.wrapContainer;
 const replaceWith = helpers.replaceWith;
 const moveSelectedItemToFist = helpers.moveSelectedItemToFist;
 const removeSelectedItemFromHistory = helpers.removeSelectedItemFromHistory;
-
-function isDescendant(parent, child) {
-  var node = child.parentNode;
-  while (node != null) {
-      if (node == parent) {
-          return true;
-      }
-      node = node.parentNode;
-  }
-  return false;
-}
-
-
+const isDescendant = helpers.isDescendant;
 
 var handler = function(e) {
   // Data initializing
@@ -212,9 +200,6 @@ var handler = function(e) {
     this.inputNode.focus();
     this.wrapContainer.focus();
   }
-
-  e.stopPropagation();
-  e.preventDefault();
 }
 
 var wrapperContainerBlurHandler = function(e) {
@@ -226,9 +211,7 @@ var wrapperContainerBlurHandler = function(e) {
       this.wrapContainer.childNodes[1].classList.remove('show-myself');
       this.wrapContainer.childNodes[1].classList.add('hide-myself');
     }
-  }, 50);
-  e.stopPropagation();
-  e.preventDefault();
+  }, 10);
 }
 
 module.exports = {

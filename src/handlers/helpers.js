@@ -16,6 +16,17 @@ var replaceWith = (replacedNode, newNode) => {
   replacedNode.parentNode.removeChild(replacedNode);
 }
 
+var isDescendant = (parent, child) => {
+  var node = child.parentNode;
+  while (node != null) {
+      if (node == parent) {
+          return true;
+      }
+      node = node.parentNode;
+  }
+  return false;
+}
+
 // Helper functions
 var moveSelectedItemToFist = (targetItem, allItems) => {
   let srcItemIndex = allItems.findIndex(srcItem => srcItem.id === targetItem.id);
@@ -40,6 +51,7 @@ var removeSelectedItemFromHistory = (selectedItemId, allItems) => {
 module.exports = {
   wrapContainer: wrapContainer,
   replaceWith: replaceWith,
+  isDescendant: isDescendant,
   moveSelectedItemToFist: moveSelectedItemToFist,
   removeSelectedItemFromHistory: removeSelectedItemFromHistory,
 };
