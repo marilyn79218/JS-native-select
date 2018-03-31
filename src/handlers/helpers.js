@@ -6,6 +6,9 @@ var wrapContainer = (innerNode, wrapperEle = 'div') => {
   innerNode.parentNode.insertBefore(constainer, innerNode);
   innerNode.parentNode.removeChild(innerNode);
   constainer.appendChild(innerNode);
+  constainer.tabIndex = '-1';
+
+  return constainer;
 }
 
 var replaceWith = (replacedNode, newNode) => {

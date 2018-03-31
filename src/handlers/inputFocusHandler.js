@@ -8,12 +8,14 @@ const removeSelectedItemFromHistory = helpers.removeSelectedItemFromHistory;
 
 var handler = function(e) {
   // Data initializing
-  this.data = {};
+  this.data;
 
   // Init input node
   this.inputNode = e.target;
   this.inputNode.style.cssText = "position: relative;";
 
+  // input div wrapper
+  this.wrapContainer;
   // ul Node
   this.displayContainer;
 
@@ -164,12 +166,10 @@ var handler = function(e) {
   //   this.displayContainer.insertBefore(clonedLi, this.displayContainer.firstChild);
   // }
 
-  utils.ApiUtil.get().then(res => {
-    this.data = res;
-    console.log('Api response', res);
-
+  var initSetting = () => {
     // Wrap a container
-    wrapContainer(this.inputNode, 'div');
+    this.wrapContainer = wrapContainer(this.inputNode, 'div');
+    this.wrapContainer.addEventListener('blur', wrapperContainerBlurHandler);
     // let inputContainer = document.getElementById('input-container');
     let inputContainer = this.inputNode.parentNode;
     inputContainer.style.cssText = 'position: relative; display: inline-block;';
@@ -185,8 +185,26 @@ var handler = function(e) {
     inputContainer.appendChild(this.displayContainer);
 
     // Keep focus on the input field
-    this.inputNode.focus();
-  });
+    this.inputNode.focus(); 
+  }
+
+  if (!this.data) {
+    utils.ApiUtil.get().then(res => {
+      this.data = res;
+      console.log('Api response', res);
+
+      initSetting();
+    });
+  } else {
+    initSetting();
+  }
+
+  setTimeout(() => this.wrapContainer.focus(), 0);
+}
+
+var wrapperContainerBlurHandler = function(e) {
+  this.wrapContainer = e.target;
+  this.wrapContainer.classList.add('hide-ul');
 }
 
 module.exports = {

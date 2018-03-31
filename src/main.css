@@ -9,6 +9,10 @@
   margin: 5px 0;
 }
 
+.hide-ul > ul {
+  visibility: hidden;
+}
+
 .list-item {
   display: flex;
   justify-content: flex-start;
