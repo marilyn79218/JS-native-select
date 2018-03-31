@@ -9,10 +9,6 @@
   margin: 5px 0;
 }
 
-.hide-ul > ul {
-  /*visibility: hidden;*/
-}
-
 .hide-myself {
   visibility: hidden;
 }
@@ -48,6 +44,11 @@ li:focus {
 }
 
 .logo-name-wrapper:hover + .history-item {
+  visibility: visible;
+  cursor: pointer;
+}
+
+li:focus > div[class="history-item"] {
   visibility: visible;
   cursor: pointer;
 }

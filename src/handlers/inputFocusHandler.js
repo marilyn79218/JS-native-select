@@ -37,6 +37,15 @@ var handler = function(e) {
     drawDisplayList();
 
     this.inputNode.value = selectedItem.name;
+
+    // work, no matter click or tab & enter
+    this.wrapContainer.focus();
+
+    // Failed
+    // console.log('   currentSelectedLi', _this.currentSelectedLi);
+    // _this.currentSelectedLi.focus();
+    // e.target.focus();
+    // e.currentTarget.focus();
   }
 
   // UI render methods
@@ -59,8 +68,6 @@ var handler = function(e) {
     logoNameWrapper.id = item.id;
     logoNameWrapper.insertBefore(appImg, logoNameWrapper.firstChild);
     logoNameWrapper.appendChild(appNameWrapper);
-    // console.log('onclick li', li);
-    logoNameWrapper.onclick = logoNameHandler(item);
 
     return logoNameWrapper;
   }
@@ -154,8 +161,16 @@ var handler = function(e) {
           }
         }, 100);
       });
-      currentLi.addEventListener('click', () => {
-        this.wrapContainer.focus();
+      currentLi.addEventListener('click', logoNameHandler(item, currentLi));
+
+      // currentLi.addEventListener('focus', (e) => {
+      //   console.log('   currentLi focus', e.target);
+      // });
+      currentLi.addEventListener('keyup', (e) => {
+        if (e.keyCode === 13) {
+          console.log('   currentLi keyup', e.target);
+          currentLi.click();
+        }
       });
 
       // Append a current li to ul
