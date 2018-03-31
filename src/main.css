@@ -10,7 +10,20 @@
 }
 
 .hide-ul > ul {
+  /*visibility: hidden;*/
+}
+
+.hide-myself {
   visibility: hidden;
+}
+
+.show-myself {
+  visibility: visible;
+}
+
+/* test */
+li:focus {
+  color: white;
 }
 
 .list-item {

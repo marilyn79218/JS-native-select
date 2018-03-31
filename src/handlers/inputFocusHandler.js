@@ -6,6 +6,19 @@ const replaceWith = helpers.replaceWith;
 const moveSelectedItemToFist = helpers.moveSelectedItemToFist;
 const removeSelectedItemFromHistory = helpers.removeSelectedItemFromHistory;
 
+function isDescendant(parent, child) {
+  var node = child.parentNode;
+  while (node != null) {
+      if (node == parent) {
+          return true;
+      }
+      node = node.parentNode;
+  }
+  return false;
+}
+
+
+
 var handler = function(e) {
   // Data initializing
   this.data;
@@ -13,6 +26,7 @@ var handler = function(e) {
   // Init input node
   this.inputNode = e.target;
   this.inputNode.style.cssText = "position: relative;";
+  this.inputNode.tabIndex = 1;
 
   // input div wrapper
   this.wrapContainer;
@@ -33,8 +47,6 @@ var handler = function(e) {
     // Re-render display list (ul)
     this.displayContainer.innerHTML = '';
     drawDisplayList();
-
-    // addItemToHistory(selectedItem);
 
     this.inputNode.value = selectedItem.name;
   }
@@ -144,27 +156,24 @@ var handler = function(e) {
         currentLi = getNormalLi(item);
       }
 
+      currentLi.tabIndex = 1;
+      currentLi.addEventListener('blur', () => {
+        setTimeout(() => {
+          if (!isDescendant(this.wrapContainer, document.activeElement)
+            && document.activeElement !== this.wrapContainer) {
+            this.wrapContainer.childNodes[1].classList.remove('show-myself');
+            this.wrapContainer.childNodes[1].classList.add('hide-myself');
+          }
+        }, 100);
+      });
+      currentLi.addEventListener('click', () => {
+        this.wrapContainer.focus();
+      });
+
       // Append a current li to ul
-      // displayContainer.appendChild(historyLi);
       this.displayContainer.appendChild(currentLi);
     });
   }
-
-  // var addItemToHistory = (selectedItem) => {
-  //   // Find selected li from current ul
-  //   let ajustedLi = Array.from(this.displayContainer.childNodes).find((li) => selectedItem.id === Number(li.childNodes[0].id));
-
-  //   let clonedLi = ajustedLi.cloneNode(true);
-  //   clonedLi.childNodes[0].onclick = ajustedLi.childNodes[0].onclick;
-  //   let isInHistory = true;
-  //   replaceWith(clonedLi.childNodes[1], getLastItemInLi(isInHistory));
-
-  //   // Remove it from displayContainer (ul)
-  //   this.displayContainer.removeChild(ajustedLi);
-
-  //   // Prepend it to displayContainer (ul)
-  //   this.displayContainer.insertBefore(clonedLi, this.displayContainer.firstChild);
-  // }
 
   if (!this.data) {
     utils.ApiUtil.get().then(res => {
@@ -173,8 +182,12 @@ var handler = function(e) {
 
       // Wrap a container
       this.wrapContainer = wrapContainer(this.inputNode, 'div');
-      this.wrapContainer.addEventListener('blur', wrapperContainerBlurHandler);
-      
+      this.wrapContainer.addEventListener('focus', () => {console.log('wrapContainer focus')}, false);
+      this.wrapContainer.addEventListener('blur', wrapperContainerBlurHandler, false);
+      this.inputNode.addEventListener('focus', () => {console.log('input focus')});
+      this.inputNode.addEventListener('blur', () => {console.log('input blur')});
+
+
       let inputContainer = this.inputNode.parentNode;
       inputContainer.style.cssText = 'position: relative; display: inline-block;';
 
@@ -190,17 +203,32 @@ var handler = function(e) {
 
       // Keep focus on the input field
       this.inputNode.focus();
+      this.wrapContainer.focus();
     });
   } else {
-    this.wrapContainer.classList.toggle('hide-ul');
+    this.wrapContainer.childNodes[1].classList.remove('hide-myself');
+    this.wrapContainer.childNodes[1].classList.add('show-myself');
+
+    this.inputNode.focus();
+    this.wrapContainer.focus();
   }
 
-  setTimeout(() => this.wrapContainer.focus(), 0);
+  e.stopPropagation();
+  e.preventDefault();
 }
 
 var wrapperContainerBlurHandler = function(e) {
   this.wrapContainer = e.target;
-  this.wrapContainer.classList.toggle('hide-ul');
+
+  setTimeout(() => {
+    console.log('which is focus', document.activeElement);
+    if (!isDescendant(this.wrapContainer, document.activeElement)) {
+      this.wrapContainer.childNodes[1].classList.remove('show-myself');
+      this.wrapContainer.childNodes[1].classList.add('hide-myself');
+    }
+  }, 50);
+  e.stopPropagation();
+  e.preventDefault();
 }
 
 module.exports = {
