@@ -6,6 +6,8 @@ const replaceWith = helpers.replaceWith;
 const moveSelectedItemToFist = helpers.moveSelectedItemToFist;
 const removeSelectedItemFromHistory = helpers.removeSelectedItemFromHistory;
 const isDescendant = helpers.isDescendant;
+const cloneObject = helpers.cloneObject;
+const triggerEvent = helpers.triggerEvent;
 
 var handler = function(e) {
   // Data initializing
@@ -16,8 +18,15 @@ var handler = function(e) {
   this.inputNode.style.cssText = "position: relative;";
   this.inputNode.tabIndex = 1;
 
+  this.searchText = '';
+  this.showItems;
   this.inputNode.onkeyup = (e) => {
     console.log('input keyup', e.target.value);
+    this.searchText = e.target.value;
+
+    // Re-render display list (ul)
+    this.displayContainer.innerHTML = '';
+    drawDisplayList();
   }
 
   // input div wrapper
@@ -43,13 +52,9 @@ var handler = function(e) {
     this.inputNode.value = selectedItem.name;
 
     // work, no matter click or tab & enter
-    this.wrapContainer.focus();
-
-    // Failed
-    // console.log('   currentSelectedLi', _this.currentSelectedLi);
-    // _this.currentSelectedLi.focus();
-    // e.target.focus();
-    // e.currentTarget.focus();
+    // this.wrapContainer.focus();
+    triggerEvent(this.inputNode, 'keyup');
+    this.inputNode.focus();
   }
 
   // UI render methods
@@ -146,7 +151,10 @@ var handler = function(e) {
   }
 
   var drawDisplayList = () => {
-    this.data.items.forEach((item, index) => {
+    this.showItems = this.data.items.filter(item =>
+      item.name.trim().toLowerCase().indexOf(this.searchText.trim().toLowerCase()) > -1
+    );
+    this.showItems.forEach((item, index) => {
       if (item.id === undefined) {
         item.id = index;
       }
@@ -175,7 +183,7 @@ var handler = function(e) {
       // });
       currentLi.addEventListener('keyup', (e) => {
         if (e.keyCode === 13) {
-          console.log('   currentLi keyup', currentLi.childNodes[1]);
+          console.log('   currentLi keyup');
           currentLi.childNodes[0].click();
         }
       });
@@ -188,6 +196,7 @@ var handler = function(e) {
   if (!this.data) {
     utils.ApiUtil.get().then(res => {
       this.data = res;
+      this.showItems = cloneObject(this.data.items);
       console.log('Api response', res);
 
       // Wrap a container

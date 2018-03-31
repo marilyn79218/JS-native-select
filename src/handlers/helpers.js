@@ -27,6 +27,20 @@ var isDescendant = (parent, child) => {
   return false;
 }
 
+var triggerEvent = (el, type) => {
+  if ('createEvent' in document) {
+    // modern browsers, IE9+
+    var e = document.createEvent('HTMLEvents');
+    e.initEvent(type, false, true);
+    el.dispatchEvent(e);
+  } else {
+    // IE 8
+    var e = document.createEventObject();
+    e.eventType = type;
+    el.fireEvent('on'+e.eventType, e);
+  }
+}
+
 // Helper functions
 var moveSelectedItemToFist = (targetItem, allItems) => {
   let srcItemIndex = allItems.findIndex(srcItem => srcItem.id === targetItem.id);
@@ -48,10 +62,26 @@ var removeSelectedItemFromHistory = (selectedItemId, allItems) => {
   allItems.splice(newIndex, 0, clonedItem);
 }
 
+var cloneObject = (obj) => {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+
+  var temp = obj.constructor();
+  for (var key in obj) {
+    temp[key] = cloneObject(obj[key]);
+  }
+  
+  return temp;
+}
+
+
 module.exports = {
   wrapContainer: wrapContainer,
   replaceWith: replaceWith,
   isDescendant: isDescendant,
+  triggerEvent: triggerEvent,
   moveSelectedItemToFist: moveSelectedItemToFist,
   removeSelectedItemFromHistory: removeSelectedItemFromHistory,
+  cloneObject: cloneObject,
 };
