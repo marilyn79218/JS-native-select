@@ -16,6 +16,10 @@ var handler = function(e) {
   this.inputNode.style.cssText = "position: relative;";
   this.inputNode.tabIndex = 1;
 
+  this.inputNode.onkeyup = (e) => {
+    console.log('input keyup', e.target.value);
+  }
+
   // input div wrapper
   this.wrapContainer;
   // ul Node
@@ -191,7 +195,7 @@ var handler = function(e) {
       this.wrapContainer.addEventListener('focus', () => {console.log('wrapContainer focus')}, false);
       this.wrapContainer.addEventListener('blur', wrapperContainerBlurHandler, false);
       this.inputNode.addEventListener('focus', () => {console.log('input focus')});
-      this.inputNode.addEventListener('blur', () => {console.log('input blur')});
+      this.inputNode.addEventListener('blur', inputBlurHandler);
 
 
       let inputContainer = this.inputNode.parentNode;
@@ -209,14 +213,12 @@ var handler = function(e) {
 
       // Keep focus on the input field
       this.inputNode.focus();
-      this.wrapContainer.focus();
     });
   } else {
     this.wrapContainer.childNodes[1].classList.remove('hide-myself');
     this.wrapContainer.childNodes[1].classList.add('show-myself');
 
     this.inputNode.focus();
-    this.wrapContainer.focus();
   }
 }
 
@@ -230,6 +232,19 @@ var wrapperContainerBlurHandler = function(e) {
       this.wrapContainer.childNodes[1].classList.add('hide-myself');
     }
   }, 10);
+}
+
+var inputBlurHandler = (e) => {
+  this.inputNode = e.target;
+  let wrapContainer = this.inputNode.parentNode;
+
+  setTimeout(() => {
+    if (!isDescendant(wrapContainer, document.activeElement)) {
+      console.log('input blur hide list', document.activeElement);
+      wrapContainer.childNodes[1].classList.remove('show-myself');
+      wrapContainer.childNodes[1].classList.add('hide-myself');
+    }
+  }, 0)
 }
 
 module.exports = {
