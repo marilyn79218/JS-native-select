@@ -3,11 +3,15 @@ const helpers = require('./helpers.js');
 
 const wrapContainer = helpers.wrapContainer;
 const replaceWith = helpers.replaceWith;
-const moveSelectedItemToFist = helpers.moveSelectedItemToFist;
-const removeSelectedItemFromHistory = helpers.removeSelectedItemFromHistory;
+const removeItemFromList = helpers.removeItemFromList;
 const isDescendant = helpers.isDescendant;
 const cloneObject = helpers.cloneObject;
 const triggerEvent = helpers.triggerEvent;
+const getStorageKey = helpers.getStorageKey;
+
+const getFromLs = helpers.getFromLs;
+const setToLs = helpers.setToLs;
+const removeFromLs = helpers.removeFromLs;
 
 var handler = function(e) {
   // Data initializing
@@ -18,8 +22,10 @@ var handler = function(e) {
   this.inputNode.style.cssText = "position: relative;";
   this.inputNode.tabIndex = 1;
 
+  this.storageKey = getStorageKey(this.inputNode);
+
   this.searchText = '';
-  this.showItems;
+  this.normalItems;
   this.inputNode.onkeyup = (e) => {
     console.log('input keyup', e.target.value);
     this.searchText = e.target.value;
@@ -39,11 +45,21 @@ var handler = function(e) {
   // Handler Initializing
   var logoNameHandler = (selectedItem) => (e) => {
     if (!selectedItem.isInHistory) {
-      selectedItem.isInHistory = true; 
-    }
+      selectedItem.isInHistory = true;
 
-    // Move selected item to the fist of source data list
-    moveSelectedItemToFist(selectedItem, _this.data.items);
+      let historyList = getFromLs(this.storageKey);
+      setToLs(this.storageKey, [ selectedItem, ...historyList ]);
+
+      // Remove selected item from the list
+      removeItemFromList(selectedItem, this.normalItems);
+    } else if (selectedItem.isInHistory) {
+      // Re-sort history items in localStorage
+      let historyList = getFromLs(this.storageKey);
+      let selectedItemIndex = historyList.findIndex(item => item.id === selectedItem.id);
+      historyList.splice(selectedItemIndex, 1);
+      historyList.unshift(selectedItem);
+      setToLs(this.storageKey, [ ...historyList ]);
+    }
 
     // Re-render display list (ul)
     this.displayContainer.innerHTML = '';
@@ -51,8 +67,6 @@ var handler = function(e) {
 
     this.inputNode.value = selectedItem.name;
 
-    // work, no matter click or tab & enter
-    // this.wrapContainer.focus();
     triggerEvent(this.inputNode, 'keyup');
     this.inputNode.focus();
   }
@@ -86,8 +100,20 @@ var handler = function(e) {
     let historyWrapper = e.target;
     let selectedItemId = Number(historyWrapper.previousElementSibling.id);
 
-    // Remove item from history list & Put it as the first of 'not-in-history elements'
-    removeSelectedItemFromHistory(selectedItemId, _this.data.items);
+    let historyItems = getFromLs(this.storageKey);
+
+    // Add item back to nomal list
+    let selectedHistoryItem = historyItems.find(item => item.id === selectedItemId);
+    selectedHistoryItem.isInHistory = false;
+    this.normalItems.unshift(selectedHistoryItem);
+
+    // Remove from history items in localStorage
+    let selectedItemIndex = historyItems.findIndex(item => item.id === selectedItemId);
+    console.log('index in history', selectedItemIndex);
+    console.log('all items in history', historyItems);
+    historyItems.splice(selectedItemIndex, 1);
+    console.log('updatedHistoryItems', historyItems);
+    setToLs(this.storageKey, historyItems);
 
     // Re-render display list (ul)
     this.displayContainer.innerHTML = '';
@@ -151,10 +177,19 @@ var handler = function(e) {
   }
 
   var drawDisplayList = () => {
-    this.showItems = this.data.items.filter(item =>
+    // this.showItems = this.data.items.filter(item =>
+    //   item.name.trim().toLowerCase().indexOf(this.searchText.trim().toLowerCase()) > -1
+    // );
+
+    let historyItems = getFromLs(this.storageKey);
+    let normalItems = this.normalItems;
+    let currentAllItems = [...historyItems, ...normalItems];
+    console.log('drawDisplayList', currentAllItems);
+
+    let filteredItems = currentAllItems.filter(item =>
       item.name.trim().toLowerCase().indexOf(this.searchText.trim().toLowerCase()) > -1
     );
-    this.showItems.forEach((item, index) => {
+    filteredItems.forEach((item, index) => {
       if (item.id === undefined) {
         item.id = index;
       }
@@ -196,7 +231,7 @@ var handler = function(e) {
   if (!this.data) {
     utils.ApiUtil.get().then(res => {
       this.data = res;
-      this.showItems = cloneObject(this.data.items);
+      this.normalItems = cloneObject(this.data.items);
       console.log('Api response', res);
 
       // Wrap a container
@@ -223,6 +258,8 @@ var handler = function(e) {
       // Keep focus on the input field
       this.inputNode.focus();
     });
+
+    setToLs(this.storageKey, []);
   } else {
     this.wrapContainer.childNodes[1].classList.remove('hide-myself');
     this.wrapContainer.childNodes[1].classList.add('show-myself');

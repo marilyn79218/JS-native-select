@@ -41,25 +41,23 @@ var triggerEvent = (el, type) => {
   }
 }
 
-// Helper functions
-var moveSelectedItemToFist = (targetItem, allItems) => {
-  let srcItemIndex = allItems.findIndex(srcItem => srcItem.id === targetItem.id);
-  let srcItem = Object.assign({}, allItems[srcItemIndex]);
+var genID = function () {
+  // Math.random should be unique because of its seeding algorithm.
+  return `_${Math.random().toString(36).substr(2, 9)}`;
+};
 
-  allItems.splice(srcItemIndex, 1);
-  allItems.unshift(srcItem);
+var getStorageKey = DOMNode => {
+  if (DOMNode.id.length === 0) {
+    return genID();
+  }
+
+  return DOMNode.id;
 }
 
-var removeSelectedItemFromHistory = (selectedItemId, allItems) => {
-  // Remove it from history
-  let targetItemIndex = allItems.findIndex(srcItem => srcItem.id === selectedItemId);
-  let clonedItem = Object.assign({}, allItems[targetItemIndex]);
-  allItems.splice(targetItemIndex, 1);
-
-  // Put it as the first element of 'not-in-history elements'
-  let newIndex = allItems.findIndex(srcItem => !srcItem.isInHistory);
-  clonedItem.isInHistory = false;
-  allItems.splice(newIndex, 0, clonedItem);
+// Helper functions
+var removeItemFromList = (targetItem, allItems) => {
+  let srcItemIndex = allItems.findIndex(srcItem => srcItem.id === targetItem.id);
+  allItems.splice(srcItemIndex, 1);
 }
 
 var cloneObject = (obj) => {
@@ -75,13 +73,21 @@ var cloneObject = (obj) => {
   return temp;
 }
 
+// localStorage functions
+var getFromLs = (key) => JSON.parse(localStorage.getItem(key));
+var setToLs = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+var removeFromLs = (key) => localStorage.removeItem(key);
+
 
 module.exports = {
   wrapContainer: wrapContainer,
   replaceWith: replaceWith,
   isDescendant: isDescendant,
   triggerEvent: triggerEvent,
-  moveSelectedItemToFist: moveSelectedItemToFist,
-  removeSelectedItemFromHistory: removeSelectedItemFromHistory,
+  getStorageKey: getStorageKey,
+  removeItemFromList: removeItemFromList,
   cloneObject: cloneObject,
+  getFromLs: getFromLs,
+  setToLs: setToLs,
+  removeFromLs: removeFromLs,
 };
