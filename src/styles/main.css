@@ -5,6 +5,7 @@
 }
 
 .input-style {
+  position: relative;
   outline: none;
 }
 

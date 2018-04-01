@@ -73,6 +73,9 @@ export const cloneObject = (obj) => {
   return temp;
 }
 
+export const fuzzyS = (queryString) => (targetString) =>
+  (new RegExp(Array.from(queryString).map(w => `${w}.*`).join(''))).test(targetString);
+
 // localStorage functions
 export const getFromLs = (key) => JSON.parse(localStorage.getItem(key));
 export const setToLs = (key, value) => localStorage.setItem(key, JSON.stringify(value));

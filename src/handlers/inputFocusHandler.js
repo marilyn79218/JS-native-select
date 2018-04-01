@@ -13,6 +13,7 @@ import {
   getFromLs,
   setToLs,
   removeFromLs,
+  fuzzyS,
 } from './helpers';
 
 import inputBlurHandler from './inputBlurHandler';
@@ -24,7 +25,6 @@ var inputFocusHandler = function(e) {
 
   // Init input node
   this.inputNode = e.target;
-  this.inputNode.style.cssText = "position: relative;";
   this.inputNode.tabIndex = 1;
 
   this.storageKey;
@@ -185,9 +185,11 @@ var inputFocusHandler = function(e) {
     let currentAllItems = [...historyItems, ...normalItems];
     console.log('drawDisplayList', currentAllItems);
 
-    let filteredItems = currentAllItems.filter(item =>
-      item.name.trim().toLowerCase().indexOf(this.searchText.trim().toLowerCase()) > -1
-    );
+    let _searchText = this.searchText.trim().toLowerCase();
+    let filteredItems = currentAllItems.filter(item => {
+      const itemName = item.name.trim().toLowerCase();
+      return fuzzyS(_searchText)(itemName);
+    });
     filteredItems.forEach((item, index) => {
       if (item.id === undefined) {
         item.id = index;
