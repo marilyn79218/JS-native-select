@@ -1,4 +1,4 @@
-import './main.css';
+import './styles/main.css';
 import inputClickHandler from './handlers/inputFocusHandler';
 
 var allInputs = document.getElementsByTagName('input');

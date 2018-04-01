@@ -1,0 +1,117 @@
+.wrap-container {
+  position: relative;
+  display: inline-block;
+  outline: none;
+}
+
+.input-style {
+  outline: none;
+}
+
+.input-style:focus {
+  box-shadow: 0 0 2px 3px #efeff5;
+}
+
+.display-container {
+  position: absolute;
+  left: 0;
+  width: 250px;
+  max-height: 400px;
+  background: white;
+  padding: 0;
+  overflow: auto;
+  margin: 5px 0;
+  outline: none;
+  box-shadow: 0 0 2px 3px #efeff5;
+}
+
+.hide-myself {
+  visibility: hidden;
+}
+
+.show-myself {
+  visibility: visible;
+}
+
+li:focus > div:first-child {
+  color: red;
+}
+
+.list-item {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 40px;
+  outline: none;
+}
+
+.list-item:focus > div:nth-child(2) {
+  visibility: visible;
+  cursor: pointer;
+  color: red;
+}
+
+.history-li > div:first-child {
+  background-color: #ccf2ff;
+}
+
+.history-li > div:first-child:hover {
+  background-color: #ffffcc;
+}
+
+.history-block {
+  color: #ccf2ff;
+}
+
+.logo-name-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  cursor: pointer;
+  width: 150px;
+  height: 100%;
+  padding: 0 5px;
+}
+
+.logo-name-wrapper:hover {
+  background-color: #ffffcc;
+  color: red;
+}
+
+.logo-name-wrapper:hover + div {
+  visibility: visible;
+  cursor: pointer;
+  color: red;
+  background-color: white;
+}
+
+.logo-name-wrapper:hover + .history-item {
+  visibility: visible;
+  cursor: pointer;
+  color: red;
+}
+
+.app-img {
+  width: 28px;
+  height: 28px;
+  margin-right: 3px;
+}
+
+.app-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-item {
+  visibility: hidden;
+  font-size: 14px;
+  text-align: center;
+}
+
+.history-item:hover {
+  visibility: visible;
+  cursor: pointer;
+  color: red;
+}
+

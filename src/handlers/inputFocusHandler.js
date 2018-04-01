@@ -146,12 +146,14 @@ var inputFocusHandler = function(e) {
   var getHistoryLi = (item) => {
     let li = document.createElement('li');
     li.classList.add('list-item');
+    li.classList.add('history-li');
 
     // Create logo name wrapper
     let logoNameWrapper = getLogoNameWrapper(item, li);
 
     let isInHistory = true;
     let historyWrapper = getLastItemInLi(isInHistory);
+    historyWrapper.classList.add('history-block');
 
     // Append logo name wrapper & history item to li
     li.insertBefore(logoNameWrapper, li.firstChild);
@@ -236,14 +238,13 @@ var inputFocusHandler = function(e) {
 
       // Wrap a container
       this.wrapContainer = wrapContainer(this.inputNode, 'div');
+      this.wrapContainer.classList.add('wrap-container');
       this.wrapContainer.addEventListener('focus', () => {console.log('wrapContainer focus')}, false);
       this.wrapContainer.addEventListener('blur', wrapperContainerBlurHandler, false);
+
+      this.inputNode.classList.add('input-style');
       this.inputNode.addEventListener('focus', () => {console.log('input focus')});
       this.inputNode.addEventListener('blur', inputBlurHandler);
-
-
-      let inputContainer = this.inputNode.parentNode;
-      inputContainer.style.cssText = 'position: relative; display: inline-block;';
 
       // Init the display list container
       this.displayContainer = document.createElement('ul');
