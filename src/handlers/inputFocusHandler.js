@@ -22,7 +22,7 @@ var handler = function(e) {
   this.inputNode.style.cssText = "position: relative;";
   this.inputNode.tabIndex = 1;
 
-  this.storageKey = getStorageKey(this.inputNode);
+  this.storageKey;
 
   this.searchText = '';
   this.normalItems;
@@ -221,6 +221,9 @@ var handler = function(e) {
   }
 
   if (!this.data) {
+    this.storageKey = getStorageKey(this.inputNode);
+    setToLs(this.storageKey, []);
+
     utils.ApiUtil.get().then(res => {
       this.data = res;
       this.normalItems = cloneObject(this.data.items);
@@ -250,8 +253,6 @@ var handler = function(e) {
       // Keep focus on the input field
       this.inputNode.focus();
     });
-
-    setToLs(this.storageKey, []);
   } else {
     this.wrapContainer.childNodes[1].classList.remove('hide-myself');
     this.wrapContainer.childNodes[1].classList.add('show-myself');
