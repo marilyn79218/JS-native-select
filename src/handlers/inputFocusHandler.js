@@ -5,16 +5,20 @@ import {
 import {
   wrapContainer,
   replaceWith,
-  removeItemFromList,
   isDescendant,
-  cloneObject,
   triggerEvent,
+} from './helpers/DomHelpers';
+import {
   getStorageKey,
+  removeItemFromList,
+  cloneObject,
+  fuzzyS,
+} from './helpers/generalHelpers';
+import {
   getFromLs,
   setToLs,
   removeFromLs,
-  fuzzyS,
-} from './helpers';
+} from './helpers/localStorageHelpers';
 
 import inputBlurHandler from './inputBlurHandler';
 import wrapperContainerBlurHandler from './wrapperContainerBlurHandler';

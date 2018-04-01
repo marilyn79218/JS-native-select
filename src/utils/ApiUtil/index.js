@@ -1,7 +1,7 @@
 import lineServices from '../../fixtures/line-services';
 import {
   cloneObject,
-} from '../../handlers/helpers';
+} from '../../handlers/helpers/generalHelpers';
 
 const BASE_URL1 = 'https://line.me/en/family-apps';
 // const BASE_URL2 = 'https://line.me/en/download';

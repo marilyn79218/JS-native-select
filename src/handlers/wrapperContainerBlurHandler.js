@@ -1,6 +1,6 @@
 import {
   isDescendant,
-} from './helpers.js';
+} from './helpers/DomHelpers';
 
 const wrapperContainerBlurHandler = function(e) {
   this.wrapContainer = e.target;

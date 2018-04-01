@@ -1,6 +1,6 @@
 import {
   isDescendant,
-} from './helpers.js';
+} from './helpers/DomHelpers';
 
 const inputBlurHandler = function(e) {
   this.inputNode = e.target;
