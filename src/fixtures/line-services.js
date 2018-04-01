@@ -1,4 +1,4 @@
-const data = {
+const lineServices = {
   totoal: 10,
   items: [
     {
@@ -48,4 +48,4 @@ const data = {
   ]
 };
 
-module.exports = data;
+export default lineServices;

@@ -1,17 +1,7 @@
-const lineServices = require('../../fixtures/line-services.js');
-
-function cloneObject(obj) {
-  if (obj === null || typeof obj !== 'object') {
-    return obj;
-  }
-
-  var temp = obj.constructor();
-  for (var key in obj) {
-    temp[key] = cloneObject(obj[key]);
-  }
-  
-  return temp;
-}
+import lineServices from '../../fixtures/line-services';
+import {
+  cloneObject,
+} from '../../handlers/helpers';
 
 const BASE_URL1 = 'https://line.me/en/family-apps';
 // const BASE_URL2 = 'https://line.me/en/download';
@@ -29,5 +19,4 @@ class ApiUtil {
   }
 }
 
-// export default ApiUtil;
-module.exports = ApiUtil;
+export default ApiUtil;

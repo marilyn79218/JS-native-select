@@ -1,6 +1,6 @@
 
 // DOM methods
-var wrapContainer = (innerNode, wrapperEle = 'div') => {
+export const wrapContainer = (innerNode, wrapperEle = 'div') => {
   const constainer = document.createElement(wrapperEle);
   // constainer.id = 'input-container';
   innerNode.parentNode.insertBefore(constainer, innerNode);
@@ -11,12 +11,12 @@ var wrapContainer = (innerNode, wrapperEle = 'div') => {
   return constainer;
 }
 
-var replaceWith = (replacedNode, newNode) => {
+export const replaceWith = (replacedNode, newNode) => {
   replacedNode.parentNode.insertBefore(newNode, replacedNode);
   replacedNode.parentNode.removeChild(replacedNode);
 }
 
-var isDescendant = (parent, child) => {
+export const isDescendant = (parent, child) => {
   var node = child.parentNode;
   while (node != null) {
       if (node == parent) {
@@ -27,7 +27,7 @@ var isDescendant = (parent, child) => {
   return false;
 }
 
-var triggerEvent = (el, type) => {
+export const triggerEvent = (el, type) => {
   if ('createEvent' in document) {
     // modern browsers, IE9+
     var e = document.createEvent('HTMLEvents');
@@ -41,12 +41,12 @@ var triggerEvent = (el, type) => {
   }
 }
 
-var genID = function () {
+const genID = function () {
   // Math.random should be unique because of its seeding algorithm.
   return `_${Math.random().toString(36).substr(2, 9)}`;
 };
 
-var getStorageKey = DOMNode => {
+export const getStorageKey = DOMNode => {
   if (DOMNode.id.length === 0) {
     return genID();
   }
@@ -55,12 +55,12 @@ var getStorageKey = DOMNode => {
 }
 
 // Helper functions
-var removeItemFromList = (targetItem, allItems) => {
+export const removeItemFromList = (targetItem, allItems) => {
   let srcItemIndex = allItems.findIndex(srcItem => srcItem.id === targetItem.id);
   allItems.splice(srcItemIndex, 1);
 }
 
-var cloneObject = (obj) => {
+export const cloneObject = (obj) => {
   if (obj === null || typeof obj !== 'object') {
     return obj;
   }
@@ -74,20 +74,6 @@ var cloneObject = (obj) => {
 }
 
 // localStorage functions
-var getFromLs = (key) => JSON.parse(localStorage.getItem(key));
-var setToLs = (key, value) => localStorage.setItem(key, JSON.stringify(value));
-var removeFromLs = (key) => localStorage.removeItem(key);
-
-
-module.exports = {
-  wrapContainer: wrapContainer,
-  replaceWith: replaceWith,
-  isDescendant: isDescendant,
-  triggerEvent: triggerEvent,
-  getStorageKey: getStorageKey,
-  removeItemFromList: removeItemFromList,
-  cloneObject: cloneObject,
-  getFromLs: getFromLs,
-  setToLs: setToLs,
-  removeFromLs: removeFromLs,
-};
+export const getFromLs = (key) => JSON.parse(localStorage.getItem(key));
+export const setToLs = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+export const removeFromLs = (key) => localStorage.removeItem(key);

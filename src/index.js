@@ -1,9 +1,7 @@
-require('./main.css');
-const handlers = require('./handlers/inputFocusHandler.js');
-
-const handler = handlers.handler;
+import './main.css';
+import inputClickHandler from './handlers/inputFocusHandler';
 
 var allInputs = document.getElementsByTagName('input');
 Array.from(allInputs).forEach(input => {
-  input.addEventListener('click', handler, false);
+  input.addEventListener('click', inputClickHandler, false);
 })

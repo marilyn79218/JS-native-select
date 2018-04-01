@@ -1,19 +1,24 @@
-const utils = require('../utils/index.js');
-const helpers = require('./helpers.js');
+import {
+  ApiUtil,
+} from '../utils';
 
-const wrapContainer = helpers.wrapContainer;
-const replaceWith = helpers.replaceWith;
-const removeItemFromList = helpers.removeItemFromList;
-const isDescendant = helpers.isDescendant;
-const cloneObject = helpers.cloneObject;
-const triggerEvent = helpers.triggerEvent;
-const getStorageKey = helpers.getStorageKey;
+import {
+  wrapContainer,
+  replaceWith,
+  removeItemFromList,
+  isDescendant,
+  cloneObject,
+  triggerEvent,
+  getStorageKey,
+  getFromLs,
+  setToLs,
+  removeFromLs,
+} from './helpers';
 
-const getFromLs = helpers.getFromLs;
-const setToLs = helpers.setToLs;
-const removeFromLs = helpers.removeFromLs;
+import inputBlurHandler from './inputBlurHandler';
+import wrapperContainerBlurHandler from './wrapperContainerBlurHandler';
 
-var handler = function(e) {
+var inputFocusHandler = function(e) {
   // Data initializing
   this.data;
 
@@ -224,7 +229,7 @@ var handler = function(e) {
     this.storageKey = getStorageKey(this.inputNode);
     setToLs(this.storageKey, []);
 
-    utils.ApiUtil.get().then(res => {
+    ApiUtil.get().then(res => {
       this.data = res;
       this.normalItems = cloneObject(this.data.items);
       console.log('Api response', res);
@@ -259,34 +264,7 @@ var handler = function(e) {
 
     this.inputNode.focus();
   }
-}
-
-var wrapperContainerBlurHandler = function(e) {
-  this.wrapContainer = e.target;
-
-  setTimeout(() => {
-    console.log('which is focus', document.activeElement);
-    if (!isDescendant(this.wrapContainer, document.activeElement)) {
-      this.wrapContainer.childNodes[1].classList.remove('show-myself');
-      this.wrapContainer.childNodes[1].classList.add('hide-myself');
-    }
-  }, 10);
-}
-
-var inputBlurHandler = (e) => {
-  this.inputNode = e.target;
-  let wrapContainer = this.inputNode.parentNode;
-
-  setTimeout(() => {
-    if (!isDescendant(wrapContainer, document.activeElement)) {
-      console.log('input blur hide list', document.activeElement);
-      wrapContainer.childNodes[1].classList.remove('show-myself');
-      wrapContainer.childNodes[1].classList.add('hide-myself');
-    }
-  }, 0)
-}
-
-module.exports = {
-  handler: handler,
 };
+
+export default inputFocusHandler;
 
