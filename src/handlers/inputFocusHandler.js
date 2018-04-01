@@ -109,10 +109,7 @@ var handler = function(e) {
 
     // Remove from history items in localStorage
     let selectedItemIndex = historyItems.findIndex(item => item.id === selectedItemId);
-    console.log('index in history', selectedItemIndex);
-    console.log('all items in history', historyItems);
     historyItems.splice(selectedItemIndex, 1);
-    console.log('updatedHistoryItems', historyItems);
     setToLs(this.storageKey, historyItems);
 
     // Re-render display list (ul)
@@ -123,7 +120,6 @@ var handler = function(e) {
   }
 
   var getLastItemInLi = (isInHistory) => {
-    // let lastItemWrapper;
     if (isInHistory) {
       // Create history item
       let historyWrapper = document.createElement('div');
@@ -177,10 +173,6 @@ var handler = function(e) {
   }
 
   var drawDisplayList = () => {
-    // this.showItems = this.data.items.filter(item =>
-    //   item.name.trim().toLowerCase().indexOf(this.searchText.trim().toLowerCase()) > -1
-    // );
-
     let historyItems = getFromLs(this.storageKey);
     let normalItems = this.normalItems;
     let currentAllItems = [...historyItems, ...normalItems];
