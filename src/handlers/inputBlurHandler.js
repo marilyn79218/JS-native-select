@@ -14,11 +14,10 @@ const inputBlurHandler = function(e) {
 
   setTimeout(() => {
     if (!isDescendant(wrapContainer, document.activeElement)) {
-      console.log('input blur hide list', document.activeElement);
       compose(
         addClass('hide-myself'),
         removeClass('show-myself'),
-      )(wrapContainer.childNodes[1])
+      )(wrapContainer.childNodes[1]);
     }
   }, 0)
 };

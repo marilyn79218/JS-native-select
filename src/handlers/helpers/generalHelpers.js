@@ -1,3 +1,5 @@
+// Implement my own compose function
+// i.e., (f1, f2, f3, f4...) => value => f1(f2(f3(f4(value))));
 export const compose = (...args) => (x) => {
   let result;
   
@@ -14,9 +16,11 @@ export const compose = (...args) => (x) => {
   return result;
 };
 
+// Implement 'Fuzzy Search'
 export const fuzzyS = (queryString) => (targetString) =>
   (new RegExp(Array.from(queryString).map(w => `${w}.*`).join(''))).test(targetString);
 
+// Get unique storage key for each <input>
 const genID = () => {
   // Math.random should be unique because of its seeding algorithm.
   return `_${Math.random().toString(36).substr(2, 9)}`;
@@ -36,6 +40,7 @@ export const removeItemFromList = (targetItem, allItems) => {
   allItems.splice(srcItemIndex, 1);
 }
 
+// Implement deep clone for object & array
 export const cloneObject = (obj) => {
   if (obj === null || typeof obj !== 'object') {
     return obj;

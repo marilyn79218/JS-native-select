@@ -1,15 +1,22 @@
 import {
+  addClass,
+  removeClass,
   isDescendant,
 } from './helpers/DomHelpers';
+
+import {
+  compose,
+} from './helpers/generalHelpers';
 
 const wrapperContainerBlurHandler = function(e) {
   this.wrapContainer = e.target;
 
   setTimeout(() => {
-    console.log('which is focus', document.activeElement);
     if (!isDescendant(this.wrapContainer, document.activeElement)) {
-      this.wrapContainer.childNodes[1].classList.remove('show-myself');
-      this.wrapContainer.childNodes[1].classList.add('hide-myself');
+      compose(
+        addClass('hide-myself'),
+        removeClass('show-myself'),
+      )(this.wrapContainer.childNodes[1]);
     }
   }, 10);
 }
