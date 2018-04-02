@@ -5,6 +5,8 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const common = require('./webpack.common.js');
 
+const ENDPOINT_ENV = process.env.endpoint;
+
 module.exports = merge(common, {
     // devtool: 'source-map',
     module: {
@@ -29,7 +31,8 @@ module.exports = merge(common, {
         new ExtractTextPlugin('[name].bundle.css'),
         new webpack.DefinePlugin({
             'process.env': {
-                'NODE_ENV': JSON.stringify('production')
+                'NODE_ENV': JSON.stringify('production'),
+                'ENDPOINT_ENV': JSON.stringify(ENDPOINT_ENV)
             }
         })
     ]

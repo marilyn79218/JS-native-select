@@ -17,6 +17,36 @@ A demo project which imeplements suggestion list on HTML input tag without any l
 
 ```bash
 $ yarn
+```
+
+## Other Data Source (Bonus point 3)
+
+### Development
+```bash
 $ yarn start
 ```
 The demo page will served on port 8080
+
+or
+```bash
+$ endpoint=http://dev-url yarn start
+```
+If the endpoint is given as above, data will fetch from it.
+
+
+### Production
+```bash
+$ endpoint=http://prod-url yarn build
+```
+
+#### Data Template
+```js
+{
+  items: [
+    {
+      name: 'app name',
+      logo: 'logo-url',
+    },
+  ],
+}
+```

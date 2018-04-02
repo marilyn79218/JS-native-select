@@ -138,7 +138,7 @@ var inputFocusHandler = function(e) {
   }
 
   // The wrapper, a div, which contains <img> & its app name as TextNode
-  // It's also the first element for a <li>
+  // ALso, It return the first child of <li>
   var getLogoNameWrapper = (item, li) => {
     // Create first element, <img>
     let appImg = document.createElement('img');
@@ -186,7 +186,7 @@ var inputFocusHandler = function(e) {
     this.wrapContainer.focus();
   }
 
-  // A rendering method to get the last item in a <li>
+  // A rendering method that return the last child of <li>
   // If the current app is in history list, return the element which makes the app removable.
   // If not, return a normal block element
   var getLastItemInLi = (isInHistory) => {
