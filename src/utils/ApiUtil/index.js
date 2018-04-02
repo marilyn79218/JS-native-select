@@ -5,6 +5,7 @@ import {
 
 const BASE_URL = 'https://line.me/en/family-apps';
 
+// Mock data
 const fetch = (_url, _options) => Promise.resolve(cloneObject(lineServices));
 
 class ApiUtil {

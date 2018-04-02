@@ -8,6 +8,7 @@ import {
   compose,
 } from './helpers/generalHelpers';
 
+// Handler for blur at wrapper div of input
 const wrapperContainerBlurHandler = function(e) {
   this.wrapContainer = e.target;
 
