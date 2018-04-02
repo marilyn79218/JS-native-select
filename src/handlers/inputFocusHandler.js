@@ -56,18 +56,20 @@ import wrapperContainerBlurHandler from './wrapperContainerBlurHandler';
 */
 
 var inputFocusHandler = function(e) {
-  // Data initializing
-  this.data;
-
   // Init input node
   this.inputNode = e.target;
   this.inputNode.tabIndex = 1;
-
-  // A key for save apps in localStorage
-  this.storageKey;
-
+  this.data;
   this.searchText = '';
   this.normalItems;
+
+  // A key for save hisotry apps in localStorage
+  this.storageKey;
+
+  // input div wrapper
+  this.wrapContainer;
+  // ul Node
+  this.displayContainer;
 
   // A event listener for user to type in input field
   this.inputNode.onkeyup = (e) => {
@@ -78,11 +80,6 @@ var inputFocusHandler = function(e) {
     this.displayContainer.innerHTML = '';
     drawDisplayList();
   }
-
-  // input div wrapper
-  this.wrapContainer;
-  // ul Node
-  this.displayContainer;
 
   // Handler for clicking app in suggestion list
   var logoNameHandler = (selectedItem) => (e) => {

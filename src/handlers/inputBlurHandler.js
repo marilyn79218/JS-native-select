@@ -1,6 +1,12 @@
 import {
+  addClass,
+  removeClass,
   isDescendant,
 } from './helpers/DomHelpers';
+
+import {
+  compose,
+} from './helpers/generalHelpers';
 
 const inputBlurHandler = function(e) {
   this.inputNode = e.target;
@@ -9,8 +15,10 @@ const inputBlurHandler = function(e) {
   setTimeout(() => {
     if (!isDescendant(wrapContainer, document.activeElement)) {
       console.log('input blur hide list', document.activeElement);
-      wrapContainer.childNodes[1].classList.remove('show-myself');
-      wrapContainer.childNodes[1].classList.add('hide-myself');
+      compose(
+        addClass('hide-myself'),
+        removeClass('show-myself'),
+      )(wrapContainer.childNodes[1])
     }
   }, 0)
 };

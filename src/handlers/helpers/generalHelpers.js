@@ -12,7 +12,10 @@ export const compose = (...args) => (x) => {
   });
   
   return result;
-}
+};
+
+export const fuzzyS = (queryString) => (targetString) =>
+  (new RegExp(Array.from(queryString).map(w => `${w}.*`).join(''))).test(targetString);
 
 const genID = () => {
   // Math.random should be unique because of its seeding algorithm.
@@ -44,7 +47,4 @@ export const cloneObject = (obj) => {
   }
   
   return temp;
-}
-
-export const fuzzyS = (queryString) => (targetString) =>
-  (new RegExp(Array.from(queryString).map(w => `${w}.*`).join(''))).test(targetString);
+};
