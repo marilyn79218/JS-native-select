@@ -9,7 +9,6 @@ import {
   removeClass,
   addEvent,
   wrapContainer,
-  replaceWith,
   isDescendant,
   triggerEvent,
 } from './helpers/DomHelpers';
