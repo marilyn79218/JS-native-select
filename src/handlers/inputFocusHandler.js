@@ -40,11 +40,7 @@ var inputFocusHandler = function(e) {
   this.inputNode = e.target;
   this.inputNode.tabIndex = 1;
   this.data;
-  this.searchText = '';
   this.normalItems;
-
-  // A key for save hisotry apps in localStorage
-  this.storageKey;
 
   // input div wrapper
   this.wrapContainer;
@@ -54,8 +50,10 @@ var inputFocusHandler = function(e) {
   // If the input field is focused/ clicked in first time, we need to fetch data & initialize basic DOMs.
   // If not, just show the suggestion list
   if (!this.data) {
+    // A key for save hisotry apps in localStorage
     this.storageKey = getStorageKey(this.inputNode);
     setToLs(this.storageKey, []);
+    this.searchText = '';
 
     ApiUtil.get().then(res => {
       this.data = res;
@@ -183,7 +181,7 @@ var inputFocusHandler = function(e) {
     this.displayContainer.innerHTML = '';
     drawDisplayList();
 
-    this.wrapContainer.focus();
+    this.inputNode.focus();
   }
 
   // A rendering method that return the last child of <li>
