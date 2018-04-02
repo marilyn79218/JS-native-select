@@ -3,6 +3,7 @@ import {
   ApiUtil,
 } from '../utils';
 
+// Lots of helpers
 import {
   wrapContainer,
   replaceWith,
@@ -21,8 +22,35 @@ import {
   removeFromLs,
 } from './helpers/localStorageHelpers';
 
+// Additional handlers
 import inputBlurHandler from './inputBlurHandler';
 import wrapperContainerBlurHandler from './wrapperContainerBlurHandler';
+
+/* Main user stories */
+/*
+  - Story 1:
+    All <input> in your HTML are implementable with my handler no matter they have an id attribute or not.
+  - Story 2:
+    When user focus/ click in the input field, the suggestion list showed.
+  - Story 3:
+    When user blur at the current input field or suggestion list area, the suggestion list is hided.
+  - Story 4:
+    When user select an app in the list with keyboard or mouse, the input value should be updated as its app name.
+    Also, it should be also updated as `the first priority in history list` (which is stored in localStorage).
+  - Story 5:
+    When an app is removed from the history list, it will be putted back as `the first priority in normal list`.
+  - Story 6:
+    If there's a value in input field and it's being focused, the suggestion list only shows apps that match 'Fuzzy Search'.
+  - Story 7:
+    The data in each suggestion list is independent from each other.
+*/
+
+
+/* Basic variable nameing */
+/*
+  History list: contains the app which has been selected before
+  Normal items: the apps which has not been selected, i.e., the apps which is in suggestion list but not in history list
+*/
 
 var inputFocusHandler = function(e) {
   // Data initializing
@@ -32,10 +60,13 @@ var inputFocusHandler = function(e) {
   this.inputNode = e.target;
   this.inputNode.tabIndex = 1;
 
+  // A key for save apps in localStorage
   this.storageKey;
 
   this.searchText = '';
   this.normalItems;
+
+  // A event listener for user to type in input field
   this.inputNode.onkeyup = (e) => {
     console.log('input keyup', e.target.value);
     this.searchText = e.target.value;
@@ -50,20 +81,20 @@ var inputFocusHandler = function(e) {
   // ul Node
   this.displayContainer;
 
-  var _this = this;
-
-  // Handler Initializing
+  // Handler for clicking app in suggestion list
   var logoNameHandler = (selectedItem) => (e) => {
     if (!selectedItem.isInHistory) {
       selectedItem.isInHistory = true;
 
+      // Save the selected app into history list in localStorage
       let historyList = getFromLs(this.storageKey);
       setToLs(this.storageKey, [ selectedItem, ...historyList ]);
 
-      // Remove selected item from the list
+      // Remove the selected item from the normal list
       removeItemFromList(selectedItem, this.normalItems);
     } else if (selectedItem.isInHistory) {
-      // Re-sort history items in localStorage
+      // Re-sort history items in localStorage,
+      // put the current selected app which has listed in history list as the first priority
       let historyList = getFromLs(this.storageKey);
       let selectedItemIndex = historyList.findIndex(item => item.id === selectedItem.id);
       historyList.splice(selectedItemIndex, 1);
@@ -71,31 +102,32 @@ var inputFocusHandler = function(e) {
       setToLs(this.storageKey, [ ...historyList ]);
     }
 
-    // Re-render display list (ul)
+    // Re-render suggestion list (ul)
     this.displayContainer.innerHTML = '';
     drawDisplayList();
 
     this.inputNode.value = selectedItem.name;
 
+    // Keep focus on the input field
     triggerEvent(this.inputNode, 'keyup');
     this.inputNode.focus();
   }
 
-  // UI render methods
-  // Create basic li children
+  // The wrapper, a div, which contains <img> & its app name
+  // It's also the first element for a <li>
   var getLogoNameWrapper = (item, li) => {
-    // Create first element, img
+    // Create first element, <img>
     let appImg = document.createElement('img');
     appImg.src = item.logo;
     appImg.classList.add('app-img');
 
-    // Create second element, p
+    // Create second element, <p> for app name
     let appNameWrapper = document.createElement('p');
     let appNameText = document.createTextNode(`${item.name}`);
     appNameWrapper.classList.add('app-name');
     appNameWrapper.appendChild(appNameText);
 
-    // Create wrapper for logo & name
+    // Create wrapper for wrapping logo & name elements
     let logoNameWrapper = document.createElement('div');
     logoNameWrapper.classList.add('logo-name-wrapper');
     logoNameWrapper.id = item.id;
@@ -106,18 +138,19 @@ var inputFocusHandler = function(e) {
     return logoNameWrapper;
   }
 
+  // A handler for removing the selected app from history list
   var historyWrapperHandler = (e) => {
     let historyWrapper = e.target;
     let selectedItemId = Number(historyWrapper.previousElementSibling.id);
 
     let historyItems = getFromLs(this.storageKey);
 
-    // Add item back to nomal list
+    // Add the app back to normal list
     let selectedHistoryItem = historyItems.find(item => item.id === selectedItemId);
     selectedHistoryItem.isInHistory = false;
     this.normalItems.unshift(selectedHistoryItem);
 
-    // Remove from history items in localStorage
+    // Remove it from history list in localStorage
     let selectedItemIndex = historyItems.findIndex(item => item.id === selectedItemId);
     historyItems.splice(selectedItemIndex, 1);
     setToLs(this.storageKey, historyItems);
@@ -129,9 +162,11 @@ var inputFocusHandler = function(e) {
     this.wrapContainer.focus();
   }
 
+  // A rendering method to get the last item in a <li>
+  // If the current app is in history list, return the element which makes the app removable.
+  // If not, return a normal block element
   var getLastItemInLi = (isInHistory) => {
     if (isInHistory) {
-      // Create history item
       let historyWrapper = document.createElement('div');
       historyWrapper.classList.add('history-item');
       let historyText = document.createTextNode('remove history');
@@ -147,7 +182,7 @@ var inputFocusHandler = function(e) {
     }
   }
 
-  // Create history li
+  // Create a li which contains all sub-elements for the app in history list
   var getHistoryLi = (item) => {
     let li = document.createElement('li');
     li.classList.add('list-item');
@@ -167,6 +202,7 @@ var inputFocusHandler = function(e) {
     return li;
   }
 
+  // Create a li which contains all sub-elements for the app in normal list
   var getNormalLi = (item) => {
     let li = document.createElement('li');
     li.classList.add('list-item');
@@ -184,12 +220,14 @@ var inputFocusHandler = function(e) {
     return li;
   }
 
+  // A rendering method for drawing ths whole suggestion list
   var drawDisplayList = () => {
     let historyItems = getFromLs(this.storageKey);
     let normalItems = this.normalItems;
     let currentAllItems = [...historyItems, ...normalItems];
     console.log('drawDisplayList', currentAllItems);
 
+    // Implements fuzzy search
     let _searchText = this.searchText.trim().toLowerCase();
     let filteredItems = currentAllItems.filter(item => {
       const itemName = item.name.trim().toLowerCase();
@@ -207,6 +245,7 @@ var inputFocusHandler = function(e) {
         currentLi = getNormalLi(item);
       }
 
+      // Making the li focusable by keyboard & hide the suggestion list if it is blured
       currentLi.tabIndex = 1;
       currentLi.addEventListener('blur', () => {
         setTimeout(() => {
@@ -222,6 +261,7 @@ var inputFocusHandler = function(e) {
       // currentLi.addEventListener('focus', (e) => {
       //   console.log('   currentLi focus', e.target);
       // });
+      // An event listener for focusing next app with keyboard
       currentLi.addEventListener('keyup', (e) => {
         if (e.keyCode === 13) {
           console.log('   currentLi keyup');
@@ -234,6 +274,8 @@ var inputFocusHandler = function(e) {
     });
   }
 
+  // If the input field is focused/ clicked in first time, we neeed to fetch data & initialize basic DOMs.
+  // If it's not, just show the suggestion list
   if (!this.data) {
     this.storageKey = getStorageKey(this.inputNode);
     setToLs(this.storageKey, []);
@@ -243,7 +285,8 @@ var inputFocusHandler = function(e) {
       this.normalItems = cloneObject(this.data.items);
       console.log('Api response', res);
 
-      // Wrap a container
+      // Basic settings...
+      // Wrap a div container at the outside of the <input> for positioning purpose
       this.wrapContainer = wrapContainer(this.inputNode, 'div');
       this.wrapContainer.classList.add('wrap-container');
       this.wrapContainer.addEventListener('focus', () => {console.log('wrapContainer focus')}, false);
@@ -253,14 +296,14 @@ var inputFocusHandler = function(e) {
       this.inputNode.addEventListener('focus', () => {console.log('input focus')});
       this.inputNode.addEventListener('blur', inputBlurHandler);
 
-      // Init the display list container
       this.displayContainer = document.createElement('ul');
       this.displayContainer.classList.add('display-container');
 
-      // Draw display list
+      // Render the suggestion list
       drawDisplayList();
 
-      // Put display container after input field
+      // Append the <ul> container to the <div> wrapper,
+      // Purpose for positioning after <input>
       this.wrapContainer.appendChild(this.displayContainer);
 
       // Keep focus on the input field
