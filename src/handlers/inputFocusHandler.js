@@ -5,12 +5,16 @@ import {
 
 // Lots of helpers
 import {
+  addClass,
+  removeClass,
+  addEvent,
   wrapContainer,
   replaceWith,
   isDescendant,
   triggerEvent,
 } from './helpers/DomHelpers';
 import {
+  compose,
   getStorageKey,
   removeItemFromList,
   cloneObject,
@@ -288,16 +292,20 @@ var inputFocusHandler = function(e) {
       // Basic settings...
       // Wrap a div container at the outside of the <input> for positioning purpose
       this.wrapContainer = wrapContainer(this.inputNode, 'div');
-      this.wrapContainer.classList.add('wrap-container');
-      this.wrapContainer.addEventListener('focus', () => {console.log('wrapContainer focus')}, false);
-      this.wrapContainer.addEventListener('blur', wrapperContainerBlurHandler, false);
+      compose(
+        addEvent('blur', wrapperContainerBlurHandler, false),
+        addEvent('focus', () => {console.log('wrapContainer focus')}, false),
+        addClass('wrap-container'),
+      )(this.wrapContainer);
 
-      this.inputNode.classList.add('input-style');
-      this.inputNode.addEventListener('focus', () => {console.log('input focus')});
-      this.inputNode.addEventListener('blur', inputBlurHandler);
+      compose(
+        addEvent('blur', inputBlurHandler, false),
+        addEvent('focus', () => {console.log('input focus')}, false),
+        addClass('input-style'),
+      )(this.inputNode);
 
       this.displayContainer = document.createElement('ul');
-      this.displayContainer.classList.add('display-container');
+      addClass('display-container')(this.displayContainer);
 
       // Render the suggestion list
       drawDisplayList();
@@ -310,8 +318,10 @@ var inputFocusHandler = function(e) {
       this.inputNode.focus();
     });
   } else {
-    this.wrapContainer.childNodes[1].classList.remove('hide-myself');
-    this.wrapContainer.childNodes[1].classList.add('show-myself');
+    compose(
+      addClass('show-myself'),
+      removeClass('hide-myself'),
+    )(this.wrapContainer.childNodes[1]);
 
     this.inputNode.focus();
   }

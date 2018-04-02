@@ -1,3 +1,19 @@
+export const compose = (...args) => (x) => {
+  let result;
+  
+  var tmp = [...args];
+  args.forEach(arg => {
+    var fun = tmp.pop();
+    if (!result) {
+      result = fun(x); 
+    } else {
+      result = fun(result); 
+    }
+  });
+  
+  return result;
+}
+
 const genID = () => {
   // Math.random should be unique because of its seeding algorithm.
   return `_${Math.random().toString(36).substr(2, 9)}`;

@@ -9,6 +9,11 @@ export const wrapContainer = (innerNode, wrapperEle = 'div') => {
   return constainer;
 };
 
+export const addClass = className => targetDOM => targetDOM.classList.add(className);
+export const removeClass = className => targetDOM => targetDOM.classList.remove(className);
+
+export const addEvent = (eventName, eventHandler, isCapture) => targetDOM => targetDOM.addEventListener(eventName, eventHandler, isCapture);
+
 export const replaceWith = (replacedNode, newNode) => {
   replacedNode.parentNode.insertBefore(newNode, replacedNode);
   replacedNode.parentNode.removeChild(replacedNode);
