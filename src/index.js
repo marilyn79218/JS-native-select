@@ -1,6 +1,6 @@
-import inputClickHandler from './handlers/inputFocusHandler';
+import inputFocusHandler from './handlers/inputFocusHandler';
 
 var allInputs = document.getElementsByTagName('input');
 Array.from(allInputs).forEach(input => {
-  input.addEventListener('focus', inputClickHandler, false);
+  input.addEventListener('focus', inputFocusHandler, false);
 })
