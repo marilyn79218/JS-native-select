@@ -26,6 +26,7 @@ const genID = () => {
   return `_${Math.random().toString(36).substr(2, 9)}`;
 };
 
+// Get an unique key for a input field to save apps in history list independently.
 export const getStorageKey = DOMNode => {
   if (DOMNode.id.length === 0) {
     return genID();
@@ -34,7 +35,7 @@ export const getStorageKey = DOMNode => {
   return DOMNode.id;
 }
 
-// Helper functions
+// Helper function
 export const removeItemFromList = (targetItem, allItems) => {
   let srcItemIndex = allItems.findIndex(srcItem => srcItem.id === targetItem.id);
   allItems.splice(srcItemIndex, 1);

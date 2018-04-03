@@ -31,20 +31,21 @@ import wrapperContainerBlurHandler from './wrapperContainerBlurHandler';
 
 /* Basic variable nameing */
 /*
-  - History list: contains the app which has been selected before
-  - Normal items: the apps which has not been selected, i.e., the apps which is in suggestion list but not in history list
+  - History list: contains the app which has selected before
+  - Normal items: the app which are not selected yet and which are removed from history list.
+                  i.e., the apps which is in suggestion list but not in history list
 */
 
 var inputFocusHandler = function(e) {
-  // Init input node
+  // Single source of truth
   this.inputNode = e.target;
   this.inputNode.tabIndex = 1;
   this.data;
   this.normalItems;
 
-  // input div wrapper
+  // The div wrapper of input
   this.wrapContainer;
-  // ul Node
+  // The ul for suggestion list
   this.displayContainer;
 
   // If the input field is focused/ clicked in first time, we need to fetch data & initialize basic DOMs.
@@ -94,7 +95,7 @@ var inputFocusHandler = function(e) {
     this.inputNode.focus();
   }
 
-  // A event listener for user to type in input field
+  // Handler for user to type in input field
   this.inputNode.onkeyup = (e) => {
     this.searchText = e.target.value;
 
@@ -104,6 +105,8 @@ var inputFocusHandler = function(e) {
   }
 
   // Handler for clicking app in suggestion list
+  // If the selected app is not in history list, put it as the first priority in it and remove it from the normal list
+  // If it is, just put it as the first priority in the history list.
   var logoNameHandler = (selectedItem) => (e) => {
     if (!selectedItem.isInHistory) {
       selectedItem.isInHistory = true;
@@ -115,8 +118,7 @@ var inputFocusHandler = function(e) {
       // Remove the selected item from the normal list
       removeItemFromList(selectedItem, this.normalItems);
     } else if (selectedItem.isInHistory) {
-      // Re-sort history items in localStorage,
-      // put the current selected app which has listed in history list as the first priority
+      // Re-sort history items in localStorage
       let historyList = getFromLs(this.storageKey);
       let selectedItemIndex = historyList.findIndex(item => item.id === selectedItem.id);
       historyList.splice(selectedItemIndex, 1);
@@ -185,7 +187,7 @@ var inputFocusHandler = function(e) {
   }
 
   // A rendering method that return the last child of <li>
-  // If the current app is in history list, return the element which makes the app removable.
+  // If the current rendered app is in history list, return the element which makes the app removable.
   // If not, return a normal block element
   var getLastItemInLi = (isInHistory) => {
     if (isInHistory) {
@@ -204,7 +206,8 @@ var inputFocusHandler = function(e) {
     }
   }
 
-  // Create a li which contains all sub-elements for the app in history list
+  // Create a li which contains two sub-elements for the app in `history list`
+  // The two sub-elements are composed from getLogoNameWrapper() & getLastItemInLi() respectively.
   var getHistoryLi = (item) => {
     let li = document.createElement('li');
     compose(
@@ -227,7 +230,8 @@ var inputFocusHandler = function(e) {
     return li;
   }
 
-  // Create a li which contains all sub-elements for the app in normal list
+  // The functionality of getNormalLi is similar to getHistoryLi,
+  // but it create a li which contains two sub-elements for the app in `normal list`
   var getNormalLi = (item) => {
     let li = document.createElement('li');
     addClass('list-item')(li);
@@ -257,6 +261,8 @@ var inputFocusHandler = function(e) {
       const itemName = item.name.trim().toLowerCase();
       return fuzzyS(_searchText)(itemName);
     });
+    
+    // Only shows the app which match fuzzy search rule
     filteredItems.forEach((item, index) => {
       if (item.id === undefined) {
         item.id = index;

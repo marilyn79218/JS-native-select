@@ -1,6 +1,6 @@
+// Wrap an element (default to <div>) around a given Node (said innerNode here).
 export const wrapContainer = (innerNode, wrapperEle = 'div') => {
   const constainer = document.createElement(wrapperEle);
-  // constainer.id = 'input-container';
   innerNode.parentNode.insertBefore(constainer, innerNode);
   innerNode.parentNode.removeChild(innerNode);
   constainer.appendChild(innerNode);
@@ -9,11 +9,13 @@ export const wrapContainer = (innerNode, wrapperEle = 'div') => {
   return constainer;
 };
 
+// className helpers
 export const addClass = className => targetDOM => targetDOM.classList.add(className);
 export const removeClass = className => targetDOM => targetDOM.classList.remove(className);
 
 export const addEvent = (eventName, eventHandler, isCapture) => targetDOM => targetDOM.addEventListener(eventName, eventHandler, isCapture);
 
+// Check if a Node is a child of another Node
 export const isDescendant = (parent, child) => {
   var node = child.parentNode;
   while (node != null) {
@@ -25,6 +27,7 @@ export const isDescendant = (parent, child) => {
   return false;
 };
 
+// Event dispatcher
 export const triggerEvent = (el, type) => {
   if ('createEvent' in document) {
     // modern browsers, IE9+
