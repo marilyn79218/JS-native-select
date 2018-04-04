@@ -4,6 +4,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const common = require('./webpack.common.js');
+const autoprefixer = require('autoprefixer');
 
 const ENDPOINT_ENV = process.env.endpoint;
 
@@ -13,15 +14,44 @@ module.exports = merge(common, {
         rules: [
             {
                 test: /\.css$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: {
-                        loader: 'css-loader',
-                        options: {
-                            minimize: true
-                        }
+                loader: ExtractTextPlugin.extract(
+                    {
+                        fallback: require.resolve('style-loader'),
+                        use: [
+                            {
+                                loader: require.resolve('css-loader'),
+                                options: {
+                                    importLoaders: 1,
+                                    minimize: true,
+                                },
+                            },
+                            {
+                                loader: require.resolve('postcss-loader'),
+                                options: {
+                                    // Necessary for external CSS imports to work
+                                    // https://github.com/facebookincubator/create-react-app/issues/2677
+                                    ident: 'postcss',
+                                    plugins: () => [
+                                        require('postcss-flexbugs-fixes'),
+                                        autoprefixer({
+                                            browsers: [
+                                                '>1%',
+                                                'last 4 versions',
+                                                'Firefox ESR',
+                                                'not ie < 9', // React doesn't support IE8 anyway
+                                            ],
+                                            flexbox: 'no-2009',
+                                        }),
+                                        require('postcss-extend'),
+                                        require('postcss-nested'),
+                                        require('postcss-color-function'),
+                                    ],
+                                },
+                            },
+                        ],
                     }
-                })
+                ),
+                // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
             }
         ]
     },

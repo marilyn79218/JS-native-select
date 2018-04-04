@@ -220,7 +220,6 @@ var inputFocusHandler = function(e) {
 
     let isInHistory = true;
     let historyWrapper = getLastItemInLi(isInHistory);
-    addClass('history-block')(historyWrapper);
 
 
     // Append logo name wrapper & history item to li

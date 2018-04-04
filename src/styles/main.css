@@ -7,10 +7,10 @@
 .input-style {
   position: relative;
   outline: none;
-}
 
-.input-style:focus {
-  box-shadow: 0 0 2px 3px #efeff5;
+  &:focus {
+    box-shadow: 0 0 2px 3px #efeff5;
+  }
 }
 
 .display-container {
@@ -34,34 +34,38 @@
   visibility: visible;
 }
 
-li:focus > div:first-child {
-  color: red;
-}
-
 .list-item {
   display: flex;
   justify-content: flex-start;
   align-items: center;
   height: 40px;
   outline: none;
+
+  &:focus {
+
+    > div {
+      color: red;
+
+      &:nth-child(2) {
+        visibility: visible;
+        cursor: pointer;
+      }
+    }    
+  }
 }
 
-.list-item:focus > div:nth-child(2) {
-  visibility: visible;
-  cursor: pointer;
-  color: red;
-}
+.history-li {
 
-.history-li > div:first-child {
-  background-color: #ccf2ff;
-}
+  > div {
 
-.history-li > div:first-child:hover {
-  background-color: #ffffcc;
-}
+    &:first-child {
+      background-color: #ccf2ff;
 
-.history-block {
-  color: #ccf2ff;
+      &:hover {
+        background-color: #ffffcc;
+      }
+    }
+  }
 }
 
 .logo-name-wrapper {
@@ -72,24 +76,18 @@ li:focus > div:first-child {
   width: 150px;
   height: 100%;
   padding: 0 5px;
-}
 
-.logo-name-wrapper:hover {
-  background-color: #ffffcc;
-  color: red;
-}
+  &:hover {
+    background-color: #ffffcc;
+    color: red;
 
-.logo-name-wrapper:hover + div {
-  visibility: visible;
-  cursor: pointer;
-  color: red;
-  background-color: white;
-}
-
-.logo-name-wrapper:hover + .history-item {
-  visibility: visible;
-  cursor: pointer;
-  color: red;
+    + .history-item {
+      visibility: visible;
+      cursor: pointer;
+      color: red;
+      background-color: white;
+    } 
+  }
 }
 
 .app-img {
@@ -108,11 +106,11 @@ li:focus > div:first-child {
   visibility: hidden;
   font-size: 14px;
   text-align: center;
-}
 
-.history-item:hover {
-  visibility: visible;
-  cursor: pointer;
-  color: red;
+  &:hover {
+    visibility: visible;
+    cursor: pointer;
+    color: red;
+  }
 }
 
