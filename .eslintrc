@@ -1,0 +1,19 @@
+{
+  "extends": "airbnb",
+  "env": {
+    "browser": true,
+    "node": true,
+    "jest": true
+  },
+  "parser": "babel-eslint",
+  "rules": {
+    "func-names": "off",
+    "import/extensions": "off",
+    "new-cap": "off",
+    "no-underscore-dangle": "off",
+    "import/prefer-default-export": "off",
+    "no-use-before-define": "off",
+    "no-unused-expressions": 1,
+    "import/no-extraneous-dependencies": "off"
+  }
+}
