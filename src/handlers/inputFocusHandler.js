@@ -29,6 +29,10 @@ import {
 import inputBlurHandler from './inputBlurHandler';
 import wrapperContainerBlurHandler from './wrapperContainerBlurHandler';
 
+import {
+  drawDisplayList,
+} from './drawer';
+
 /* Basic variable nameing */
 /*
   - History list: contains the app which has selected before
@@ -77,7 +81,11 @@ var inputFocusHandler = function(e) {
       addClass('display-container')(this.displayContainer);
 
       // Render the suggestion list
-      drawDisplayList();
+      drawDisplayList({
+        storageKey: this.storageKey,
+        normalItems: this.normalItems,
+        searchText: this.searchText,
+      })(this.wrapContainer, this.inputNode, this.displayContainer);
 
       // Append the <ul> container to the <div> wrapper,
       // Purpose for positioning after <input>
@@ -101,205 +109,13 @@ var inputFocusHandler = function(e) {
 
     // Re-render display list (ul)
     this.displayContainer.innerHTML = '';
-    drawDisplayList();
-  }
-
-  // Handler for clicking app in suggestion list
-  // If the selected app is not in history list, put it as the first priority in it and remove it from the normal list
-  // If it is, just put it as the first priority in the history list.
-  var logoNameHandler = (selectedItem) => (e) => {
-    if (!selectedItem.isInHistory) {
-      selectedItem.isInHistory = true;
-
-      // Save the selected app into history list in localStorage
-      let historyList = getFromLs(this.storageKey);
-      setToLs(this.storageKey, [ selectedItem, ...historyList ]);
-
-      // Remove the selected item from the normal list
-      removeItemFromList(selectedItem, this.normalItems);
-    } else if (selectedItem.isInHistory) {
-      // Re-sort history items in localStorage
-      let historyList = getFromLs(this.storageKey);
-      let selectedItemIndex = historyList.findIndex(item => item.id === selectedItem.id);
-      historyList.splice(selectedItemIndex, 1);
-      historyList.unshift(selectedItem);
-      setToLs(this.storageKey, [ ...historyList ]);
-    }
-
-    // Re-render suggestion list (ul)
-    this.displayContainer.innerHTML = '';
-    drawDisplayList();
-
-    this.inputNode.value = selectedItem.name;
-
-    // Keep focus on the input field
-    triggerEvent(this.inputNode, 'keyup');
-    this.inputNode.focus();
-  }
-
-  // The wrapper, a div, which contains <img> & its app name as TextNode
-  // ALso, It return the first child of <li>
-  var getLogoNameWrapper = (item, li) => {
-    // Create first element, <img>
-    let appImg = document.createElement('img');
-    appImg.src = item.logo;
-    addClass('app-img')(appImg);
-
-    // Create second element, <p> for app name
-    let appNameWrapper = document.createElement('p');
-    let appNameText = document.createTextNode(`${item.name}`);
-    addClass('app-name')(appNameWrapper);
-    appNameWrapper.appendChild(appNameText);
-
-    // Create wrapper for wrapping logo & name elements
-    let logoNameWrapper = document.createElement('div');
-    addClass('logo-name-wrapper')(logoNameWrapper);
-    logoNameWrapper.id = item.id;
-    logoNameWrapper.insertBefore(appImg, logoNameWrapper.firstChild);
-    logoNameWrapper.appendChild(appNameWrapper);
-    logoNameWrapper.onclick = logoNameHandler(item);
-
-    return logoNameWrapper;
-  }
-
-  // A handler for removing the selected app from history list
-  var historyWrapperHandler = (e) => {
-    let historyWrapper = e.target;
-    let selectedItemId = Number(historyWrapper.previousElementSibling.id);
-
-    let historyItems = getFromLs(this.storageKey);
-
-    // Add the app back to normal list
-    let selectedHistoryItem = historyItems.find(item => item.id === selectedItemId);
-    selectedHistoryItem.isInHistory = false;
-    this.normalItems.unshift(selectedHistoryItem);
-
-    // Remove it from history list in localStorage
-    let selectedItemIndex = historyItems.findIndex(item => item.id === selectedItemId);
-    historyItems.splice(selectedItemIndex, 1);
-    setToLs(this.storageKey, historyItems);
-
-    // Re-render display list (ul)
-    this.displayContainer.innerHTML = '';
-    drawDisplayList();
-
-    this.inputNode.focus();
-  }
-
-  // A rendering method that return the last child of <li>
-  // If the current rendered app is in history list, return the element which makes the app removable.
-  // If not, return a normal block element
-  var getLastItemInLi = (isInHistory) => {
-    if (isInHistory) {
-      let historyWrapper = document.createElement('div');
-      addClass('history-item')(historyWrapper);
-      let historyText = document.createTextNode('remove history');
-      historyWrapper.appendChild(historyText);
-      historyWrapper.onclick = historyWrapperHandler;
-
-      return historyWrapper;
-    } else {
-      // Create block item
-      let blockWrapper = document.createElement('div');
-
-      return blockWrapper;
-    }
-  }
-
-  // Create a li which contains two sub-elements for the app in `history list`
-  // The two sub-elements are composed from getLogoNameWrapper() & getLastItemInLi() respectively.
-  var getHistoryLi = (item) => {
-    let li = document.createElement('li');
-    compose(
-      addClass('history-li'),
-      addClass('list-item'),
-    )(li)
-
-    // Create logo name wrapper
-    let logoNameWrapper = getLogoNameWrapper(item, li);
-
-    let isInHistory = true;
-    let historyWrapper = getLastItemInLi(isInHistory);
-
-
-    // Append logo name wrapper & history item to li
-    li.insertBefore(logoNameWrapper, li.firstChild);
-    li.appendChild(historyWrapper);
-
-    return li;
-  }
-
-  // The functionality of getNormalLi is similar to getHistoryLi,
-  // but it create a li which contains two sub-elements for the app in `normal list`
-  var getNormalLi = (item) => {
-    let li = document.createElement('li');
-    addClass('list-item')(li);
-
-    // Create logo name wrapper
-    let logoNameWrapper = getLogoNameWrapper(item, li);
-
-    let isInHistory = false;
-    let historyWrapper = getLastItemInLi(isInHistory);
-
-    // Append logo name wrapper & history item to li
-    li.insertBefore(logoNameWrapper, li.firstChild);
-    li.appendChild(historyWrapper);
-
-    return li;
-  }
-
-  // A rendering method for drawing ths whole suggestion list
-  var drawDisplayList = () => {
-    let historyItems = getFromLs(this.storageKey);
-    let normalItems = this.normalItems;
-    let currentAllItems = [...historyItems, ...normalItems];
-
-    // Implements fuzzy search
-    let _searchText = this.searchText.trim().toLowerCase();
-    let filteredItems = currentAllItems.filter(item => {
-      const itemName = item.name.trim().toLowerCase();
-      return fuzzyS(_searchText)(itemName);
-    });
-    
-    // Only shows the app which match fuzzy search rule
-    filteredItems.forEach((item, index) => {
-      if (item.id === undefined) {
-        item.id = index;
-      }
-
-      let currentLi;
-      if (item.isInHistory) {
-        currentLi = getHistoryLi(item);
-      } else {
-        currentLi = getNormalLi(item);
-      }
-
-      // Making the li focusable by keyboard & hide the suggestion list if it is blured
-      currentLi.tabIndex = 1;
-      currentLi.addEventListener('blur', () => {
-        setTimeout(() => {
-          if (!isDescendant(this.wrapContainer, document.activeElement)
-            && document.activeElement !== this.wrapContainer) {
-            compose(
-              addClass('hide-myself'),
-              removeClass('show-myself'),
-            )(this.wrapContainer.childNodes[1]);
-          }
-        }, 100);
-      });
-
-      // An event listener for focusing next app with keyboard
-      currentLi.addEventListener('keyup', (e) => {
-        if (e.keyCode === 13) {
-          currentLi.childNodes[0].click();
-        }
-      });
-
-      // Append a current li to ul
-      this.displayContainer.appendChild(currentLi);
-    });
+    // drawDisplayList();
+    drawDisplayList({
+      storageKey: this.storageKey,
+      normalItems: this.normalItems,
+      searchText: this.searchText,
+    })(this.wrapContainer, this.inputNode, this.displayContainer);
   }
 };
 
 export default inputFocusHandler;
-

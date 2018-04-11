@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "precommit": "lint-staged",
     "watch": "webpack --watch",
     "start": "webpack-dev-server --open --config webpack.dev.js",
     "server": "node server.js",
