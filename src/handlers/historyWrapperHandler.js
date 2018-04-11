@@ -3,17 +3,29 @@ import {
   setToLs,
 } from './helpers/localStorageHelpers';
 
-import {
-  drawDisplayList,
-} from './drawer';
+import { drawDisplayList } from './drawer';
 
+/**
+ * Handler for clicking app in suggestion list
+ *
+ * @first_param props: { storageKey, normalItems, searchText }
+ * @second_param mainNodes: { wrapContainer, inputNode, displayContainer }
+ * @third_param e: SyntheticEvent
+ *
+ * @return void
+ *
+ */
 // A handler for removing the selected app from history list
-export const historyWrapperHandler = (props) => (wrapContainer, inputNode, displayContainer) => (e) => {
+export const historyWrapperHandler = (props) => (mainNodes) => (e) => {
   const {
     storageKey,
     normalItems,
     searchText,
   } = props;
+  const {
+    inputNode,
+    displayContainer,
+  } = mainNodes;
 
   let historyWrapper = e.target;
   let selectedItemId = Number(historyWrapper.previousElementSibling.id);
@@ -32,12 +44,11 @@ export const historyWrapperHandler = (props) => (wrapContainer, inputNode, displ
 
   // Re-render display list (ul)
   displayContainer.innerHTML = '';
-  // drawDisplayList();
   drawDisplayList({
     storageKey,
     normalItems,
     searchText,
-  })(wrapContainer, inputNode, displayContainer);
+  })(mainNodes);
 
   inputNode.focus();
 };

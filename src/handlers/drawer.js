@@ -1,33 +1,39 @@
 import {
   addClass,
   removeClass,
-  addEvent,
-  wrapContainer,
   isDescendant,
-  triggerEvent,
 } from './helpers/DomHelpers';
 import {
   compose,
-  getStorageKey,
-  removeItemFromList,
-  cloneObject,
   fuzzyS,
 } from './helpers/generalHelpers';
-import {
-  getFromLs,
-} from './helpers/localStorageHelpers';
+import { getFromLs } from './helpers/localStorageHelpers';
 
 import {
   getHistoryLi,
   getNormalLi,
 } from './createComponents';
 
-export const drawDisplayList = (props) => (wrapContainer, inputNode, displayContainer) => {
+/**
+ * draw suggestion list
+ *
+ * @first_param props: { storageKey, normalItems, searchText }
+ * @second_param mainNodes: { wrapContainer, inputNode, displayContainer }
+ *
+ * @return void
+ *
+ */
+export const drawDisplayList = (props) => (mainNodes) => {
   const {
     storageKey,
     normalItems,
     searchText,
   } = props;
+
+  const {
+    wrapContainer,
+    displayContainer,
+  } = mainNodes;
 
   let historyItems = getFromLs(storageKey);
   let currentAllItems = [...historyItems, ...normalItems];
@@ -47,9 +53,9 @@ export const drawDisplayList = (props) => (wrapContainer, inputNode, displayCont
 
     let currentLi;
     if (item.isInHistory) {
-      currentLi = getHistoryLi(props)(wrapContainer, inputNode, displayContainer)(item);
+      currentLi = getHistoryLi(props)(mainNodes)(item);
     } else {
-      currentLi = getNormalLi(props)(wrapContainer, inputNode, displayContainer)(item);
+      currentLi = getNormalLi(props)(mainNodes)(item);
     }
 
     // Making the li focusable by keyboard & hide the suggestion list if it is blured

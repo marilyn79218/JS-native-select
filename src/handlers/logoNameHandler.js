@@ -1,36 +1,36 @@
-import {
-  addClass,
-  removeClass,
-  addEvent,
-  wrapContainer,
-  isDescendant,
-  triggerEvent,
-} from './helpers/DomHelpers';
-import {
-  compose,
-  getStorageKey,
-  removeItemFromList,
-  cloneObject,
-  fuzzyS,
-} from './helpers/generalHelpers';
+import { triggerEvent } from './helpers/DomHelpers';
+import { removeItemFromList } from './helpers/generalHelpers';
 import {
   getFromLs,
   setToLs,
 } from './helpers/localStorageHelpers';
 
-import {
-  drawDisplayList,
-} from './drawer';
+import { drawDisplayList } from './drawer';
 
-// Handler for clicking app in suggestion list
+
+/**
+ * Handler for clicking app in suggestion list
+ *
+ * @first_param props: { storageKey, normalItems, searchText }
+ * @second_param mainNodes: { wrapContainer, inputNode, displayContainer }
+ * @third_param selectedItem: { name, logo, isInHistory }
+ * @fourth_param e: SyntheticEvent
+ *
+ * @return void
+ *
+ */
 // If the selected app is not in history list, put it as the first priority in it and remove it from the normal list
 // If it is, just put it as the first priority in the history list.
-export const logoNameHandler = (props) => (wrapContainer, inputNode, displayContainer) => (selectedItem) => (e) => {
+export const logoNameHandler = (props) => (mainNodes) => (selectedItem) => (e) => {
   const {
     storageKey,
     normalItems,
     searchText,
   } = props;
+  const {
+    inputNode,
+    displayContainer,
+  } = mainNodes;
 
   if (!selectedItem.isInHistory) {
     selectedItem.isInHistory = true;
@@ -52,12 +52,11 @@ export const logoNameHandler = (props) => (wrapContainer, inputNode, displayCont
 
   // Re-render suggestion list (ul)
   displayContainer.innerHTML = '';
-  // drawDisplayList();
   drawDisplayList({
     storageKey,
     normalItems,
     searchText,
-  })(wrapContainer, inputNode, displayContainer);
+  })(mainNodes);
 
   inputNode.value = selectedItem.name;
 

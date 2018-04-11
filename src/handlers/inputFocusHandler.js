@@ -1,7 +1,5 @@
 import '../styles/main.css';
-import {
-  ApiUtil,
-} from '../utils';
+import { ApiUtil } from '../utils';
 
 // Lots of helpers
 import {
@@ -9,29 +7,19 @@ import {
   removeClass,
   addEvent,
   wrapContainer,
-  isDescendant,
-  triggerEvent,
 } from './helpers/DomHelpers';
 import {
   compose,
   getStorageKey,
-  removeItemFromList,
   cloneObject,
-  fuzzyS,
 } from './helpers/generalHelpers';
-import {
-  getFromLs,
-  setToLs,
-  removeFromLs,
-} from './helpers/localStorageHelpers';
+import { setToLs } from './helpers/localStorageHelpers';
 
 // Additional handlers
 import inputBlurHandler from './inputBlurHandler';
 import wrapperContainerBlurHandler from './wrapperContainerBlurHandler';
 
-import {
-  drawDisplayList,
-} from './drawer';
+import { drawDisplayList } from './drawer';
 
 /* Basic variable nameing */
 /*
@@ -124,7 +112,11 @@ var inputFocusHandler = () => {
             storageKey,
             normalItems,
             searchText,
-          })(wrapContainer, inputNode, displayContainer);
+          })({
+            wrapContainer,
+            inputNode,
+            displayContainer,
+          });
 
           // Append the <ul> container to the <div> wrapper,
           // Purpose for positioning after <input>
@@ -168,7 +160,11 @@ var inputFocusHandler = () => {
           storageKey,
           normalItems,
           searchText,
-        })(wrapContainer, inputNode, displayContainer);
+        })({
+          wrapContainer,
+          inputNode,
+          displayContainer,
+        });
       });
     }
   };
