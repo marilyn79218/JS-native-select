@@ -59,11 +59,9 @@ export const drawDisplayList = (props) => (mainNodes) => {
     // Making the li focusable by keyboard & hide the suggestion list if it is blured
     currentLi.tabIndex = 1;
     currentLi.addEventListener('blur', () => {
-      console.log('       li - blur');
       setTimeout(() => {
         if (!isDescendant(wrapContainer, document.activeElement)
           && document.activeElement !== wrapContainer) {
-          console.log('       li - blur (timeout)');
           triggerEvent(wrapContainer, 'blur');
         }
       }, 100);
@@ -71,9 +69,7 @@ export const drawDisplayList = (props) => (mainNodes) => {
 
     // An event listener for focusing next app with keyboard
     currentLi.addEventListener('keyup', (e) => {
-      console.log('       li - keyup');
       if (e.keyCode === 13) {
-        console.log('       li - keyup (Enter)');
         currentLi.childNodes[0].click();
       }
     });

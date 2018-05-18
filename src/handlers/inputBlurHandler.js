@@ -14,11 +14,9 @@ import {
 const inputBlurHandler = function(e) {
   this.inputNode = e.target;
   let wrapContainer = this.inputNode.parentNode;
-  console.log('   input - blur');
 
   setTimeout(() => {
     if (!isDescendant(wrapContainer, document.activeElement)) {
-      console.log('   input - blur (timeout)', document.activeElement);
       triggerEvent(wrapContainer, 'blur');
     }
   }, 0)
