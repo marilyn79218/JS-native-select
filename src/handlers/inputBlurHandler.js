@@ -1,7 +1,9 @@
+/* eslint-disable */
 import {
   addClass,
   removeClass,
   isDescendant,
+  triggerEvent,
 } from './helpers/DomHelpers';
 
 import {
@@ -12,13 +14,12 @@ import {
 const inputBlurHandler = function(e) {
   this.inputNode = e.target;
   let wrapContainer = this.inputNode.parentNode;
+  console.log('   input - blur');
 
   setTimeout(() => {
     if (!isDescendant(wrapContainer, document.activeElement)) {
-      compose(
-        addClass('hide-myself'),
-        removeClass('show-myself'),
-      )(wrapContainer.childNodes[1]);
+      console.log('   input - blur (timeout)', document.activeElement);
+      triggerEvent(wrapContainer, 'blur');
     }
   }, 0)
 };

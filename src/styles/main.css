@@ -28,6 +28,7 @@
 
 .hide-myself {
   visibility: hidden;
+  overflow: hidden;
 }
 
 .show-myself {

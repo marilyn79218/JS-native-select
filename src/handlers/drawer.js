@@ -1,12 +1,8 @@
 import {
-  addClass,
-  removeClass,
   isDescendant,
+  triggerEvent,
 } from './helpers/DomHelpers';
-import {
-  compose,
-  fuzzyS,
-} from './helpers/generalHelpers';
+import { fuzzyS } from './helpers/generalHelpers';
 import { getFromLs } from './helpers/localStorageHelpers';
 
 import {
@@ -23,6 +19,8 @@ import {
  * @return void
  *
  */
+
+/* eslint-disable */
 export const drawDisplayList = (props) => (mainNodes) => {
   const {
     storageKey,
@@ -61,20 +59,21 @@ export const drawDisplayList = (props) => (mainNodes) => {
     // Making the li focusable by keyboard & hide the suggestion list if it is blured
     currentLi.tabIndex = 1;
     currentLi.addEventListener('blur', () => {
+      console.log('       li - blur');
       setTimeout(() => {
         if (!isDescendant(wrapContainer, document.activeElement)
           && document.activeElement !== wrapContainer) {
-          compose(
-            addClass('hide-myself'),
-            removeClass('show-myself'),
-          )(wrapContainer.childNodes[1]);
+          console.log('       li - blur (timeout)');
+          triggerEvent(wrapContainer, 'blur');
         }
       }, 100);
     });
 
     // An event listener for focusing next app with keyboard
     currentLi.addEventListener('keyup', (e) => {
+      console.log('       li - keyup');
       if (e.keyCode === 13) {
+        console.log('       li - keyup (Enter)');
         currentLi.childNodes[0].click();
       }
     });

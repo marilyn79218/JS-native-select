@@ -50,14 +50,6 @@ export const logoNameHandler = (props) => (mainNodes) => (selectedItem) => (e) =
     setToLs(storageKey, [ ...historyList ]);
   }
 
-  // Re-render suggestion list (ul)
-  displayContainer.innerHTML = '';
-  drawDisplayList({
-    storageKey,
-    normalItems,
-    searchText,
-  })(mainNodes);
-
   inputNode.value = selectedItem.name;
 
   // Keep focus on the input field
