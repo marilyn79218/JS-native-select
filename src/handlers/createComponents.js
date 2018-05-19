@@ -14,8 +14,9 @@ import { historyWrapperHandler } from './historyWrapperHandler';
  * @return {HTMLElement}
  *
  */
+/* eslint-disable */
 // Return the wrapper, a div, which contains <img> & its app name as TextNode
-const getLogoNameWrapper = (props) => (mainNodes) => (item) => {
+const getLogoNameWrapper = (appState) => (item) => {
   // Create first element, <img>
   let appImg = document.createElement('img');
   appImg.src = item.logo;
@@ -33,7 +34,7 @@ const getLogoNameWrapper = (props) => (mainNodes) => (item) => {
   logoNameWrapper.id = item.id;
   logoNameWrapper.insertBefore(appImg, logoNameWrapper.firstChild);
   logoNameWrapper.appendChild(appNameWrapper);
-  logoNameWrapper.onclick = logoNameHandler(props)(mainNodes)(item);
+  logoNameWrapper.onclick = logoNameHandler(appState)(item);
 
   return logoNameWrapper;
 }
@@ -51,13 +52,13 @@ const getLogoNameWrapper = (props) => (mainNodes) => (item) => {
 // A rendering method that return the last child of <li>
 // If the current rendered app is in history list, return the element which makes the app removable.
 // If not, return a normal block element
-const getLastItemInLi = (props) => (mainNodes) => (isInHistory) => {
+const getLastItemInLi = (appState) => (isInHistory) => {
   if (isInHistory) {
     let historyWrapper = document.createElement('div');
     addClass('history-item')(historyWrapper);
     let historyText = document.createTextNode('remove history');
     historyWrapper.appendChild(historyText);
-    historyWrapper.onclick = historyWrapperHandler(props)(mainNodes);
+    historyWrapper.onclick = historyWrapperHandler(appState);
 
     return historyWrapper;
   } else {
@@ -80,7 +81,7 @@ const getLastItemInLi = (props) => (mainNodes) => (isInHistory) => {
  */
 // Create a li which contains two sub-elements for the app in `history list`
 // The two sub-elements are composed from getLogoNameWrapper() & getLastItemInLi() respectively.
-export const getHistoryLi = (props) => (mainNodes) => (item) => {
+export const getHistoryLi = (appState) => (item) => {
   let li = document.createElement('li');
   compose(
     addClass('history-li'),
@@ -88,10 +89,10 @@ export const getHistoryLi = (props) => (mainNodes) => (item) => {
   )(li)
 
   // Create logo name wrapper
-  let logoNameWrapper = getLogoNameWrapper(props)(mainNodes)(item);
+  let logoNameWrapper = getLogoNameWrapper(appState)(item);
 
   let isInHistory = true;
-  let historyWrapper = getLastItemInLi(props)(mainNodes)(isInHistory);
+  let historyWrapper = getLastItemInLi(appState)(isInHistory);
   addClass('history-block')(historyWrapper);
 
 
@@ -113,15 +114,15 @@ export const getHistoryLi = (props) => (mainNodes) => (item) => {
  */
 // The functionality of getNormalLi is similar to getHistoryLi,
 // but it create a li which contains two sub-elements for the app in `normal list`
-export const getNormalLi = (props) => (mainNodes) => (item) => {
+export const getNormalLi = (appState) => (item) => {
   let li = document.createElement('li');
   addClass('list-item')(li);
 
   // Create logo name wrapper
-  let logoNameWrapper = getLogoNameWrapper(props)(mainNodes)(item);
+  let logoNameWrapper = getLogoNameWrapper(appState)(item);
 
   let isInHistory = false;
-  let historyWrapper = getLastItemInLi(props)(mainNodes)(isInHistory);
+  let historyWrapper = getLastItemInLi(appState)(isInHistory);
 
   // Append logo name wrapper & history item to li
   li.insertBefore(logoNameWrapper, li.firstChild);

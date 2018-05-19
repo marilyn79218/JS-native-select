@@ -15,17 +15,15 @@ import { drawDisplayList } from './drawer';
  * @return void
  *
  */
+/* eslint-disable */
 // A handler for removing the selected app from history list
-export const historyWrapperHandler = (props) => (mainNodes) => (e) => {
+export const historyWrapperHandler = (appState) => (e) => {
   const {
     storageKey,
     normalItems,
-    searchText,
-  } = props;
-  const {
     inputNode,
     displayContainer,
-  } = mainNodes;
+  } = appState;
 
   let historyWrapper = e.target;
   let selectedItemId = Number(historyWrapper.previousElementSibling.id);
@@ -44,11 +42,7 @@ export const historyWrapperHandler = (props) => (mainNodes) => (e) => {
 
   // Re-render display list (ul)
   displayContainer.innerHTML = '';
-  drawDisplayList({
-    storageKey,
-    normalItems,
-    searchText,
-  })(mainNodes);
+  drawDisplayList(appState);
 
   inputNode.focus();
 };

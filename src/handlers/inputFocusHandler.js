@@ -27,7 +27,7 @@ import { drawDisplayList } from './drawer';
   - Normal items: the app which are not selected yet and which are removed from history list.
                   i.e., the apps which is in suggestion list but not in history list
 */
-
+/* eslint-disable */
 var inputFocusHandler = () => {
   let appState = {
     searchText: '',
@@ -98,28 +98,15 @@ var inputFocusHandler = () => {
           wrapContainer: _wrapContainer,
           displayContainer: _displayContainer,
         }, () => {
-          const {
-            storageKey,
-            normalItems,
-            searchText,
-            wrapContainer,
-            inputNode,
-            displayContainer,
-          } = appState;
-
           // Render the suggestion list
-          drawDisplayList({
-            storageKey,
-            normalItems,
-            searchText,
-          })({
-            wrapContainer,
-            inputNode,
-            displayContainer,
-          });
+          drawDisplayList(appState);
 
           // Append the <ul> container to the <div> wrapper,
           // Purpose for positioning after <input>
+          const {
+            wrapContainer,
+            displayContainer,
+          } = appState;
           wrapContainer.appendChild(displayContainer);
 
           // Keep focus on the input field
@@ -146,25 +133,11 @@ var inputFocusHandler = () => {
         searchText: e.target.value,
       }, () => {
         const {
-          storageKey,
-          normalItems,
-          searchText,
-          wrapContainer,
-          inputNode,
-          displayContainer,
+          displayContainer
         } = appState;
-
         // Re-render display list (ul)
         displayContainer.innerHTML = '';
-        drawDisplayList({
-          storageKey,
-          normalItems,
-          searchText,
-        })({
-          wrapContainer,
-          inputNode,
-          displayContainer,
-        });
+        drawDisplayList(appState);
       });
     }
   };

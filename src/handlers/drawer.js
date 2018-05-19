@@ -21,17 +21,14 @@ import {
  */
 
 /* eslint-disable */
-export const drawDisplayList = (props) => (mainNodes) => {
+export const drawDisplayList = (appState) => {
   const {
     storageKey,
     normalItems,
     searchText,
-  } = props;
-
-  const {
     wrapContainer,
     displayContainer,
-  } = mainNodes;
+  } = appState;
 
   let historyItems = getFromLs(storageKey);
   let currentAllItems = [...historyItems, ...normalItems];
@@ -51,9 +48,9 @@ export const drawDisplayList = (props) => (mainNodes) => {
 
     let currentLi;
     if (item.isInHistory) {
-      currentLi = getHistoryLi(props)(mainNodes)(item);
+      currentLi = getHistoryLi(appState)(item);
     } else {
-      currentLi = getNormalLi(props)(mainNodes)(item);
+      currentLi = getNormalLi(appState)(item);
     }
 
     // Making the li focusable by keyboard & hide the suggestion list if it is blured
