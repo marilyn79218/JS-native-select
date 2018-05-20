@@ -1,3 +1,4 @@
+/* eslint-disable */
 // Wrap an element (default to <div>) around a given Node (said innerNode here).
 export const wrapContainer = (innerNode, wrapperEle = 'div') => {
   const constainer = document.createElement(wrapperEle);
@@ -28,12 +29,19 @@ export const isDescendant = (parent, child) => {
 };
 
 // Event dispatcher
-export const triggerEvent = (el, type) => {
+export const triggerEvent = (el, type, metaData) => {
   if ('createEvent' in document) {
     // modern browsers, IE9+
-    var e = document.createEvent('HTMLEvents');
-    e.initEvent(type, false, true);
-    el.dispatchEvent(e);
+    let event;
+    if (metaData) {
+      event = new CustomEvent(type, {
+        detail: metaData,
+      });
+    } else {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(type, false, true);
+    }
+    el.dispatchEvent(event);
   } else {
     // IE 8
     var e = document.createEventObject();

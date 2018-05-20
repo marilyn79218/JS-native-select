@@ -4,6 +4,7 @@ import {
   getFromLs,
   setToLs,
 } from './helpers/localStorageHelpers';
+import { getCurrentList } from './helpers/diffHelpers';
 
 /**
  * Handler for clicking app in suggestion list
@@ -20,11 +21,14 @@ import {
 // If the selected app is not in history list, put it as the first priority in it and remove it from the normal list
 // If it is, just put it as the first priority in the history list.
 export const logoNameHandler = (appState) => (selectedItem) => (e) => {
+  console.log('click logoNameHandler', selectedItem);
   const {
     storageKey,
     normalItems,
     inputNode,
   } = appState;
+
+  const beforeList = getCurrentList(appState);
 
   if (!selectedItem.isInHistory) {
     selectedItem.isInHistory = true;
@@ -35,6 +39,7 @@ export const logoNameHandler = (appState) => (selectedItem) => (e) => {
 
     // Remove the selected item from the normal list
     removeItemFromList(selectedItem, normalItems);
+    console.log('click logoNameHandler', getFromLs(storageKey), normalItems);
   } else if (selectedItem.isInHistory) {
     // Re-sort history items in localStorage
     let historyList = getFromLs(storageKey);
@@ -47,7 +52,7 @@ export const logoNameHandler = (appState) => (selectedItem) => (e) => {
   inputNode.value = selectedItem.name;
 
   // Keep focus on the input field
-  triggerEvent(inputNode, 'keyup');
+  triggerEvent(inputNode, 'keyup', { beforeList });
   inputNode.focus();
 }
 

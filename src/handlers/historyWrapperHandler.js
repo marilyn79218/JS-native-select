@@ -2,6 +2,7 @@ import {
   getFromLs,
   setToLs,
 } from './helpers/localStorageHelpers';
+import { getCurrentList } from './helpers/diffHelpers';
 
 import { drawDisplayList } from './drawer';
 
@@ -18,12 +19,16 @@ import { drawDisplayList } from './drawer';
 /* eslint-disable */
 // A handler for removing the selected app from history list
 export const historyWrapperHandler = (appState) => (e) => {
+  console.log('remove historyWrapperHandler');
   const {
     storageKey,
     normalItems,
     inputNode,
     displayContainer,
+    setState,
   } = appState;
+
+  const beforeList = getCurrentList(appState);
 
   let historyWrapper = e.target;
   let selectedItemId = Number(historyWrapper.previousElementSibling.id);
@@ -34,15 +39,27 @@ export const historyWrapperHandler = (appState) => (e) => {
   let selectedHistoryItem = historyItems.find(item => item.id === selectedItemId);
   selectedHistoryItem.isInHistory = false;
   normalItems.unshift(selectedHistoryItem);
+  console.log('history normalItems', normalItems);
 
   // Remove it from history list in localStorage
   let selectedItemIndex = historyItems.findIndex(item => item.id === selectedItemId);
   historyItems.splice(selectedItemIndex, 1);
   setToLs(storageKey, historyItems);
+  console.log('history historyItems', historyItems);
 
-  // Re-render display list (ul)
-  displayContainer.innerHTML = '';
-  drawDisplayList(appState);
+  const afterList = getCurrentList(appState);
 
-  inputNode.focus();
+  setState({
+    beforeList,
+    afterList,
+  }, () => {
+    console.log('history beforeList', beforeList);
+    console.log('history afterList', afterList);
+
+    // Re-render display list (ul)
+    // displayContainer.innerHTML = '';
+    drawDisplayList(appState, beforeList, afterList);
+
+    inputNode.focus();
+  });
 };

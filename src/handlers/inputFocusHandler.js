@@ -14,6 +14,7 @@ import {
   cloneObject,
 } from './helpers/generalHelpers';
 import { setToLs } from './helpers/localStorageHelpers';
+import { getCurrentList } from './helpers/diffHelpers';
 
 // Additional handlers
 import inputBlurHandler from './inputBlurHandler';
@@ -31,6 +32,7 @@ import { drawDisplayList } from './drawer';
 var inputFocusHandler = () => {
   let appState = {
     searchText: '',
+    beforeList: [],
   };
 
   return (e) => {
@@ -58,6 +60,7 @@ var inputFocusHandler = () => {
 
       return appState;
     };
+    appState.setState = setState;
 
     const {
       data,
@@ -97,6 +100,7 @@ var inputFocusHandler = () => {
           normalItems: _normalItems,
           wrapContainer: _wrapContainer,
           displayContainer: _displayContainer,
+          afterList: _normalItems,
         }, () => {
           // Render the suggestion list
           drawDisplayList(appState);
@@ -129,15 +133,24 @@ var inputFocusHandler = () => {
 
     // Handler for user to type in input field
     inputNode.onkeyup = (e) => {
+      const beforeList = e.detail && e.detail.beforeList ? e.detail.beforeList : getCurrentList(appState);
+
       setState({
         searchText: e.target.value,
+        beforeList,
       }, () => {
-        const {
-          displayContainer
-        } = appState;
-        // Re-render display list (ul)
-        displayContainer.innerHTML = '';
-        drawDisplayList(appState);
+        const afterList = getCurrentList(appState);
+        setState({ afterList }, () => {
+          console.log(' input keyup beforeList', beforeList);
+          console.log(' input keyup afterList', afterList);
+
+          const {
+            displayContainer
+          } = appState;
+          // Re-render display list (ul)
+          // displayContainer.innerHTML = '';
+          drawDisplayList(appState);
+        });
       });
     }
   };
